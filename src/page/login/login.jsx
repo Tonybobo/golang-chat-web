@@ -27,7 +27,7 @@ export default function Login() {
 		)
 			.unwrap()
 			.then(() => {
-				navigate('/');
+				navigate('/panel/' + data.get('username'));
 			});
 	};
 

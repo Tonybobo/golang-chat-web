@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Panel from '../page/chat/panel';
 import Login from '../page/login/login';
+import ProtectedRoute from './protectRoute';
 
 const router = createBrowserRouter([
 	{
@@ -12,8 +13,14 @@ const router = createBrowserRouter([
 		element: <Login />
 	},
 	{
-		path: '/panel',
-		element: <Panel />
+		path: '/',
+		element: <ProtectedRoute />,
+		children: [
+			{
+				path: 'panel/:user',
+				element: <Panel />
+			}
+		]
 	}
 ]);
 

@@ -1,9 +1,13 @@
 import { useEffect } from 'react';
 import { IP_PORT, API_VERSION } from '../../utils/Constant';
 import protobuf from '../../proto/proto';
+import { useParams } from 'react-router-dom';
+import MiniDrawer from './main/left';
+import { Container } from '@mui/system';
 
 export default function Panel() {
 	let socket;
+	const { user } = useParams();
 	useEffect(() => {
 		connection();
 	});
@@ -11,7 +15,7 @@ export default function Panel() {
 	const connection = () => {
 		console.log('setting connection');
 		socket = new WebSocket(
-			'ws://' + IP_PORT + API_VERSION + '/socket.io?username=hahaha'
+			'ws://' + IP_PORT + API_VERSION + '/socket.io?username=' + user
 		);
 		socket.onopen = async () => {
 			let data = {
@@ -35,13 +39,14 @@ export default function Panel() {
 					//Array buffer need to be 8bit unsigned integer
 					new Uint8Array(event.target.result)
 				);
-				console.log(messageBuffer);
+
+				if (messageBuffer.type === 'heartbeat') return;
 			});
 		};
 	};
 	return (
-		<div>
-			<h1>Setting connection</h1>
-		</div>
+		<Container>
+			<MiniDrawer />
+		</Container>
 	);
 }
