@@ -42,7 +42,7 @@ const userSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder.addCase(login.fulfilled, (state, action) => {
-			state.users = action.payload;
+			state.users = action.payload.data;
 			state.loginError = '';
 		});
 		builder.addCase(login.rejected, (state, action) => {
