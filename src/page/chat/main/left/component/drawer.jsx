@@ -1,5 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Avatar, List, Autocomplete, TextField } from '@mui/material';
+import {
+	Avatar,
+	List,
+	Autocomplete,
+	TextField,
+	Modal,
+	Box,
+	IconButton
+} from '@mui/material';
+
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import LoadingButton from '@mui/lab/LoadingButton';
 import MuiDrawer from '@mui/material/Drawer';
 import { styled } from '@mui/material/styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -15,6 +26,7 @@ import {
 import Friends from './friend';
 import { unwrapResult } from '@reduxjs/toolkit';
 import Typography from '@mui/material/Typography';
+import { updateUserInfo } from '../../../../../redux/userSlice';
 
 const drawerWidth = 240;
 
@@ -65,12 +77,36 @@ const Drawer = styled(MuiDrawer, {
 	})
 }));
 
+const style = {
+	position: 'absolute',
+	top: '50%',
+	left: '50%',
+	transform: 'translate(-50%, -50%)',
+	width: 400,
+	bgcolor: 'background.paper',
+	border: '2px solid #000',
+	boxShadow: 24,
+	p: 4,
+	display: 'flex',
+	justifyContent: 'center',
+	alignItems: 'center',
+	flexDirection: 'column'
+};
+
 export default function LeftDrawer() {
 	const open = useSelector((state) => state.chats.open);
 	const user = useSelector((state) => state.users.users);
 	const searchOption = useSelector((state) => state.chats.search);
+	const loading = useSelector((state) => state.users.loading);
 	const [friends, setFriends] = useState([]);
 	const [search, setSearch] = useState(false);
+	const [openModal, setOpenModal] = useState(false);
+	const [editInfo, setEditInfo] = useState({
+		username: user.username,
+		name: user.name,
+		email: user.email
+	});
+	const [file, setFile] = useState('');
 	const dispatch = useDispatch();
 	const handleDrawerClose = () => {
 		dispatch(closeAppDrawer());
@@ -87,16 +123,114 @@ export default function LeftDrawer() {
 	const openSearch = () => {
 		setSearch(!search);
 	};
+	const handleModalOpen = () => setOpenModal(true);
+	const handleModalClose = () => setOpenModal(false);
+
 	const handleSearchOption = (search) => {
 		if (search !== '') dispatch(searchUsersAndGroups(search));
 	};
+	const handleUpload = (e) => {
+		setFile(URL.createObjectURL(e.target.files[0]));
+	};
+	const handleEditInfoChange = (e) => {
+		const { name, value } = e.target;
+		setEditInfo((editInfo) => ({ ...editInfo, [name]: value }));
+	};
+
+	const handleSubmitInfo = () => {
+		dispatch(updateUserInfo(editInfo))
+			.unwrap()
+			.then(() => setOpenModal(false));
+	};
+
 	return (
 		<Drawer variant="permanent" open={open}>
 			<DrawerHeader>
 				{!search && (
 					<>
-						<Avatar sizes="small" alt={user.username} src={user.avatar} />
-
+						<Avatar
+							onClick={handleModalOpen}
+							sizes="small"
+							alt={user.username}
+							src={user.avatar}
+						/>
+						<Modal
+							open={openModal}
+							onClose={handleModalClose}
+							aria-labelledby="modal-modal-title"
+							aria-describedby="modal-modal-description">
+							<Box sx={style}>
+								<Box
+									sx={{
+										display: 'flex'
+									}}>
+									<Avatar
+										sx={{
+											width: '50px',
+											height: '50px',
+											marginRight: 2
+										}}
+										src={file}
+										alt="avatar"
+									/>
+									<IconButton
+										color="primary"
+										aria-label="upload picture"
+										component="label">
+										<input
+											type="file"
+											accept="image/*"
+											onChange={handleUpload}
+											hidden
+										/>
+										<PhotoCamera />
+									</IconButton>
+								</Box>
+								<Box
+									sx={{
+										marginY: 2,
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										flexDirection: 'column'
+									}}>
+									<TextField
+										margin="dense"
+										size="small"
+										id="outlined-read-only-input"
+										label="Username"
+										disabled
+										defaultValue={user.username}
+									/>
+									<TextField
+										margin="dense"
+										size="small"
+										id="outlined-read-only-input"
+										label="Name"
+										name="name"
+										onChange={handleEditInfoChange}
+										defaultValue={user.name}
+									/>
+									<TextField
+										margin="dense"
+										size="small"
+										id="outlined-read-only-input"
+										label="Email"
+										name="email"
+										type="email"
+										onChange={handleEditInfoChange}
+										defaultValue={user.email}
+									/>
+									<LoadingButton
+										onClick={handleSubmitInfo}
+										loading={loading}
+										sx={{ marginY: 1 }}
+										variant="outlined">
+										Update
+									</LoadingButton>
+								</Box>
+							</Box>
+						</Modal>
 						<div style={{ height: 'auto' }}>
 							<Typography variant="body2">{user.username}</Typography>
 							<Typography sx={{ color: 'grey' }} variant="caption">

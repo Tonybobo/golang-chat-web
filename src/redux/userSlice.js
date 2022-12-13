@@ -1,12 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { LOGIN_URL, REGISTER_URL } from '../utils/Constant';
+import { LOGIN_URL, REGISTER_URL, UPDATE_USER_URL } from '../utils/Constant';
 
 const initialState = {
 	users: {},
 	loginError: '',
 	registerError: '',
-	open: false
+	error: '',
+	open: false,
+	loading: false
 };
 
 export const login = createAsyncThunk('users/login', async (data, thunkAPI) => {
@@ -17,6 +19,18 @@ export const login = createAsyncThunk('users/login', async (data, thunkAPI) => {
 		return thunkAPI.rejectWithValue(err.response.data.Error);
 	}
 });
+
+export const updateUserInfo = createAsyncThunk(
+	'users/update',
+	async (data, thunkAPI) => {
+		try {
+			await axios.post(UPDATE_USER_URL, data);
+			return data;
+		} catch (err) {
+			thunkAPI.rejectWithValue(err.response.data.Error);
+		}
+	}
+);
 
 export const register = createAsyncThunk(
 	'users/register',
@@ -54,6 +68,22 @@ const userSlice = createSlice({
 		});
 		builder.addCase(register.rejected, (state, action) => {
 			state.registerError = action.payload;
+		});
+		builder.addCase(updateUserInfo.fulfilled, (state, action) => {
+			state.users.name = action.payload.name
+				? action.payload.name
+				: state.users.name;
+			state.users.email = action.payload.email
+				? action.payload.email
+				: state.users.email;
+			state.loading = false;
+		});
+		builder.addCase(updateUserInfo.rejected, (state, action) => {
+			state.loading = false;
+			state.error = action.payload;
+		});
+		builder.addCase(updateUserInfo.pending, (state, action) => {
+			state.loading = true;
 		});
 	}
 });

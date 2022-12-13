@@ -7,6 +7,7 @@ export const HOST = PROTOCOL + IP_PORT;
 
 export const LOGIN_URL = HOST + API_VERSION + '/user/login';
 export const REGISTER_URL = HOST + API_VERSION + '/user/register';
+export const UPDATE_USER_URL = HOST + API_VERSION + '/edituser';
 export const USER_URL = HOST + API_VERSION + '/user/';
 export const USER_NAME_URL = HOST + '/user/name';
 export const USER_LIST_URL = HOST + '/user';
