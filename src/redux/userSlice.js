@@ -1,6 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { LOGIN_URL, REGISTER_URL, UPDATE_USER_URL } from '../utils/Constant';
+import {
+	LOGIN_URL,
+	REGISTER_URL,
+	UPDATE_USER_URL,
+	UPLOAD_USER_AVATAR
+} from '../utils/Constant';
 
 const initialState = {
 	users: {},
@@ -24,10 +29,24 @@ export const updateUserInfo = createAsyncThunk(
 	'users/update',
 	async (data, thunkAPI) => {
 		try {
-			await axios.post(UPDATE_USER_URL, data);
-			return data;
+			const response = await axios.post(UPDATE_USER_URL, data);
+
+			return response.data.user;
 		} catch (err) {
-			thunkAPI.rejectWithValue(err.response.data.Error);
+			return thunkAPI.rejectWithValue(err.response.data.Error);
+		}
+	}
+);
+
+export const uploadUserAvatar = createAsyncThunk(
+	'users/uploadAvatar',
+	async (data, { rejectWithValue }) => {
+		try {
+			const response = await axios.post(UPLOAD_USER_AVATAR, data);
+
+			return response.data.user;
+		} catch (err) {
+			return rejectWithValue(err.response.data.Error);
 		}
 	}
 );
@@ -38,8 +57,8 @@ export const register = createAsyncThunk(
 		try {
 			const response = await axios.post(REGISTER_URL, data);
 			return response.data;
-		} catch (err) {
-			return thunkAPI.rejectWithValue(err.response.data.Error);
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error.response.data.Error);
 		}
 	}
 );
@@ -70,20 +89,22 @@ const userSlice = createSlice({
 			state.registerError = action.payload;
 		});
 		builder.addCase(updateUserInfo.fulfilled, (state, action) => {
-			state.users.name = action.payload.name
-				? action.payload.name
-				: state.users.name;
-			state.users.email = action.payload.email
-				? action.payload.email
-				: state.users.email;
+			state.users = action.payload;
 			state.loading = false;
 		});
 		builder.addCase(updateUserInfo.rejected, (state, action) => {
 			state.loading = false;
 			state.error = action.payload;
 		});
-		builder.addCase(updateUserInfo.pending, (state, action) => {
-			state.loading = true;
+
+		builder.addCase(uploadUserAvatar.fulfilled, (state, action) => {
+			state.loading = false;
+			state.users = action.payload;
+		});
+
+		builder.addCase(uploadUserAvatar.rejected, (state, action) => {
+			state.loading = false;
+			state.error = action.payload;
 		});
 	}
 });

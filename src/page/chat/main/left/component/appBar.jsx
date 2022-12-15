@@ -29,6 +29,7 @@ const AppBar = styled(MuiAppBar, {
 
 export default function TopBar() {
 	const open = useSelector((state) => state.chats.open);
+	const user = useSelector((state) => state.users.users);
 	const dispatch = useDispatch();
 	const handleDrawerOpen = () => {
 		dispatch(openAppDrawer());
@@ -46,7 +47,7 @@ export default function TopBar() {
 						marginRight: 5,
 						...(open && { display: 'none' })
 					}}>
-					<Avatar alt="Remy Sharp" src="" />
+					<Avatar alt="Remy Sharp" src={user.avatar} />
 				</IconButton>
 			</Toolbar>
 		</AppBar>

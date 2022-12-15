@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { USER_URL, SEARCH_URL } from '../utils/Constant';
+import { USER_URL, SEARCH_URL, GROUP_LIST_URL } from '../utils/Constant';
 import axios from 'axios';
 
 const initialState = {
@@ -14,9 +14,17 @@ export const getFriends = createAsyncThunk(
 	async (data, thunkAPI) => {
 		try {
 			const { users } = thunkAPI.getState().users;
-			const response = await axios.get(USER_URL + `friends?uid=${users.uid}`);
-
-			return response.data;
+			const { data } = await axios.get(USER_URL + `friends?uid=${users.uid}`);
+			const friends = data.data.map((element) => {
+				element.type = 1;
+				return element;
+			});
+			const response = await axios.get(GROUP_LIST_URL + `${users.uid}`);
+			const groups = response.data.data[0].group.map((element) => {
+				element.type = 2;
+				return element;
+			});
+			return friends.concat(groups);
 		} catch (err) {
 			return thunkAPI.rejectWithValue(err.response.data.Error);
 		}
@@ -49,7 +57,7 @@ const chatSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(getFriends.fulfilled, (state, action) => {
 			state.friends = [];
-			state.friends = [...action.payload.data];
+			state.friends = [...action.payload];
 			state.error = '';
 		});
 		builder.addCase(getFriends.rejected, (state, action) => {
