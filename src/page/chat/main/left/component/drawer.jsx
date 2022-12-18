@@ -1,22 +1,31 @@
 import { useEffect, useState } from 'react';
-import { Avatar, List, Autocomplete, TextField } from '@mui/material';
+import {
+	Avatar,
+	List,
+	Autocomplete,
+	TextField,
+	IconButton
+} from '@mui/material';
 
 import MuiDrawer from '@mui/material/Drawer';
 import { styled } from '@mui/material/styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import SearchIcon from '@mui/icons-material/Search';
 import CancelIcon from '@mui/icons-material/Cancel';
+import AddIcon from '@mui/icons-material/Add';
 import Divider from '@mui/material/Divider';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-	closeAppDrawer,
-	getFriends,
-	searchUsersAndGroups
-} from '../../../../../redux/chatSlice';
+import { closeAppDrawer } from '../../../../../redux/chatSlice';
 import Friends from './friend';
 import { unwrapResult } from '@reduxjs/toolkit';
 import Typography from '@mui/material/Typography';
 import UserModal from './userModal';
+import {
+	addFriend,
+	getFriends,
+	searchUsersAndGroups,
+	selectFirstFriends
+} from '../../../../../redux/actions/chat';
 
 const drawerWidth = 240;
 
@@ -71,8 +80,8 @@ export default function LeftDrawer() {
 	const open = useSelector((state) => state.chats.open);
 	const user = useSelector((state) => state.users.users);
 	const searchOption = useSelector((state) => state.chats.search);
+	const friends = useSelector((state) => state.chats.friends);
 
-	const [friends, setFriends] = useState([]);
 	const [search, setSearch] = useState(false);
 	const [openModal, setOpenModal] = useState(false);
 
@@ -84,8 +93,8 @@ export default function LeftDrawer() {
 	useEffect(() => {
 		dispatch(getFriends())
 			.then(unwrapResult)
-			.then((originalPromiseResult) => {
-				setFriends([...originalPromiseResult]);
+			.then(() => {
+				dispatch(selectFirstFriends());
 			});
 	}, [dispatch]);
 
@@ -95,8 +104,12 @@ export default function LeftDrawer() {
 	const handleModalOpen = () => setOpenModal(true);
 	const handleModalClose = (callback) => setOpenModal(callback());
 
-	const handleSearchOption = (search) => {
-		if (search !== '') dispatch(searchUsersAndGroups(search));
+	const handleSearchOption = (event) => {
+		if (event.target.value !== '')
+			dispatch(searchUsersAndGroups(event.target.value));
+	};
+	const handleAddFriend = (friendId, type) => {
+		dispatch(addFriend({ friendId, type }));
 	};
 
 	return (
@@ -137,16 +150,16 @@ export default function LeftDrawer() {
 					<>
 						<Autocomplete
 							sx={{ width: 200 }}
-							onInputChange={(event) => {
-								handleSearchOption(event.target.value);
-							}}
+							onInputChange={handleSearchOption}
 							size="small"
 							freeSolo
 							id="free-solo-2-demo"
 							disableClearable
 							options={searchOption}
+							filterOptions={(x) => x}
 							getOptionLabel={(option) => {
 								// Value selected with enter, right from the input
+
 								if (typeof option === 'string') {
 									return option;
 								}
@@ -159,19 +172,25 @@ export default function LeftDrawer() {
 								return option.username;
 							}}
 							renderOption={(props, option) => (
-								<li key={option.uid} {...props}>
-									{option.avatar ? (
-										<img
-											src={option.avatar}
-											style={{
-												width: '30px',
-												height: '30px',
-												marginRight: '10px'
-											}}
-											alt={option.username || option.name}
-										/>
-									) : null}
+								<li
+									key={option.uid}
+									{...props}
+									style={{ display: 'flex', justifyContent: 'space-between' }}>
+									<img
+										src={option.avatar}
+										style={{
+											width: '30px',
+											height: '30px',
+											marginRight: '10px',
+											borderRadius: '50%'
+										}}
+										alt={option.username || option.name}
+									/>
 									{option.username || option.name}
+									<IconButton
+										onClick={() => handleAddFriend(option.uid, option.type)}>
+										<AddIcon />
+									</IconButton>
 								</li>
 							)}
 							renderInput={(params) => (
@@ -208,6 +227,7 @@ export default function LeftDrawer() {
 						username={friend.username}
 						avatar={friend.avatar}
 						name={friend.name}
+						type={friend.type}
 					/>
 				))}
 			</List>

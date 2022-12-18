@@ -5,7 +5,7 @@ import { openAppDrawer } from '../../../../../redux/chatSlice';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 
-import { Avatar } from '@mui/material';
+import { Avatar, Typography, Box } from '@mui/material';
 
 const drawerWidth = 240;
 
@@ -30,6 +30,7 @@ const AppBar = styled(MuiAppBar, {
 export default function TopBar() {
 	const open = useSelector((state) => state.chats.open);
 	const user = useSelector((state) => state.users.users);
+	const selectUser = useSelector((state) => state.chats.selectUser);
 	const dispatch = useDispatch();
 	const handleDrawerOpen = () => {
 		dispatch(openAppDrawer());
@@ -37,18 +38,32 @@ export default function TopBar() {
 
 	return (
 		<AppBar position="fixed" open={open}>
-			<Toolbar>
+			<Toolbar sx={{ padding: 0 }}>
 				<IconButton
 					color="inherit"
 					aria-label="open drawer"
 					onClick={handleDrawerOpen}
 					edge="start"
 					sx={{
-						marginRight: 5,
+						paddingLeft: 0,
+						marginRight: 1,
 						...(open && { display: 'none' })
 					}}>
-					<Avatar alt="Remy Sharp" src={user.avatar} />
+					<Avatar alt={user.username} src={user.avatar} />
 				</IconButton>
+				<Box component="div" sx={{ display: 'flex', alignItems: 'center' }}>
+					<Avatar
+						sx={{ marginRight: 2 }}
+						alt={selectUser.username}
+						src={selectUser.avatar}
+					/>
+					<Box component="div">
+						<Typography variant="body1">{selectUser.username}</Typography>
+						<Typography variant="subtitle2" sx={{ color: 'gray' }}>
+							{selectUser.name}
+						</Typography>
+					</Box>
+				</Box>
 			</Toolbar>
 		</AppBar>
 	);

@@ -4,6 +4,7 @@ import protobuf from '../../proto/proto';
 import { useParams } from 'react-router-dom';
 import MiniDrawer from './main/left';
 import { Container } from '@mui/system';
+import TransitionMsg from './main/right/alert';
 
 export default function Panel() {
 	let socket;
@@ -47,6 +48,7 @@ export default function Panel() {
 	return (
 		<Container>
 			<MiniDrawer />
+			<TransitionMsg />
 		</Container>
 	);
 }

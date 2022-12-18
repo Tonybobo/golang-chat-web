@@ -6,7 +6,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import {
 	updateUserInfo,
 	uploadUserAvatar
-} from '../../../../../redux/userSlice';
+} from '../../../../../redux/actions/user';
 
 export default function UserModal({ open, handleModalClose }) {
 	const style = {

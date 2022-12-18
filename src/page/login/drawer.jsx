@@ -8,8 +8,9 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeDrawer, register } from '../../redux/userSlice';
+import { closeDrawer } from '../../redux/userSlice';
 import { useNavigate } from 'react-router-dom';
+import { register } from '../../redux/actions/user';
 
 export default function RegisterDrawer() {
 	const error = useSelector((state) => state.users.registerError);

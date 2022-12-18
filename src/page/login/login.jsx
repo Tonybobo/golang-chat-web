@@ -9,9 +9,10 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeDrawer, login, openDrawer } from '../../redux/userSlice';
+import { closeDrawer, openDrawer } from '../../redux/userSlice';
 import { useNavigate } from 'react-router-dom';
 import RegisterDrawer from './drawer';
+import { login } from '../../redux/actions/user';
 
 const theme = createTheme();
 
