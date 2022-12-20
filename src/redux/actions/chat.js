@@ -4,7 +4,8 @@ import {
 	SEARCH_URL,
 	GROUP_LIST_URL,
 	ADD_FRIEND_URL,
-	GROUP_JOIN_URL
+	GROUP_JOIN_URL,
+	GROUP_CREATE_URL
 } from '../../utils/Constant';
 import axios from 'axios';
 
@@ -86,6 +87,21 @@ export const addFriend = createAsyncThunk(
 				);
 				return response.data.data;
 			}
+		} catch (err) {
+			return thunkAPI.rejectWithValue(err.response.data.Error);
+		}
+	}
+);
+
+export const createGroup = createAsyncThunk(
+	'panel/createGroup',
+	async (data, thunkAPI) => {
+		try {
+			const { users } = thunkAPI.getState().users;
+			const response = await axios.post(GROUP_CREATE_URL + users.uid, {
+				name: data.get('name')
+			});
+			return response.data.data;
 		} catch (err) {
 			return thunkAPI.rejectWithValue(err.response.data.Error);
 		}

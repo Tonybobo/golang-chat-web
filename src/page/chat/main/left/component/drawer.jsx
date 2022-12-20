@@ -13,6 +13,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import SearchIcon from '@mui/icons-material/Search';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AddIcon from '@mui/icons-material/Add';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import Divider from '@mui/material/Divider';
 import { useSelector, useDispatch } from 'react-redux';
 import { closeAppDrawer } from '../../../../../redux/chatSlice';
@@ -26,6 +27,7 @@ import {
 	searchUsersAndGroups,
 	selectFirstFriends
 } from '../../../../../redux/actions/chat';
+import GroupModal from './groupModal';
 
 const drawerWidth = 240;
 
@@ -84,6 +86,7 @@ export default function LeftDrawer() {
 
 	const [search, setSearch] = useState(false);
 	const [openModal, setOpenModal] = useState(false);
+	const [openGroupModal, setGroupModal] = useState(false);
 
 	const dispatch = useDispatch();
 	const handleDrawerClose = () => {
@@ -101,8 +104,8 @@ export default function LeftDrawer() {
 	const openSearch = () => {
 		setSearch(!search);
 	};
-	const handleModalOpen = () => setOpenModal(true);
 	const handleModalClose = (callback) => setOpenModal(callback());
+	const handleGroupModalClose = (callback) => setGroupModal(callback());
 
 	const handleSearchOption = (event) => {
 		if (event.target.value !== '')
@@ -118,13 +121,17 @@ export default function LeftDrawer() {
 				{!search && (
 					<>
 						<Avatar
-							onClick={handleModalOpen}
+							onClick={() => setOpenModal(true)}
 							sizes="small"
 							alt={user.username}
 							src={user.avatar}
 						/>
 
 						<UserModal open={openModal} handleModalClose={handleModalClose} />
+						<GroupModal
+							open={openGroupModal}
+							handleModalClose={handleGroupModalClose}
+						/>
 						<div style={{ height: 'auto' }}>
 							<Typography variant="body2">{user.username}</Typography>
 							<Typography sx={{ color: 'grey' }} variant="caption">
@@ -133,16 +140,13 @@ export default function LeftDrawer() {
 						</div>
 
 						<div style={{ display: 'flex' }}>
-							<SearchIcon
+							<GroupAddIcon
 								fontSize="medium"
 								sx={{ marginRight: 1 }}
-								onClick={openSearch}
+								onClick={() => setGroupModal(true)}
 							/>
-							<ChevronLeftIcon
-								fontSize="medium"
-								sx={{ marginLeft: 1 }}
-								onClick={handleDrawerClose}
-							/>
+							<SearchIcon fontSize="medium" onClick={openSearch} />
+							<ChevronLeftIcon fontSize="medium" onClick={handleDrawerClose} />
 						</div>
 					</>
 				)}

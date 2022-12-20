@@ -38,7 +38,7 @@ export default function TopBar() {
 
 	return (
 		<AppBar position="fixed" open={open}>
-			<Toolbar sx={{ padding: 0 }}>
+			<Toolbar>
 				<IconButton
 					color="inherit"
 					aria-label="open drawer"

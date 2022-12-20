@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
 	addFriend,
+	createGroup,
 	getFriends,
 	searchUsersAndGroups,
 	selectFirstFriends
@@ -11,7 +12,8 @@ const initialState = {
 	friends: [],
 	error: '',
 	search: [],
-	selectUser: {}
+	selectUser: {},
+	loading: false
 };
 
 const chatSlice = createSlice({
@@ -54,6 +56,14 @@ const chatSlice = createSlice({
 		});
 		builder.addCase(addFriend.rejected, (state, action) => {
 			state.error = action.payload;
+		});
+		builder.addCase(createGroup.fulfilled, (state, action) => {
+			state.friends.push(action.payload);
+			state.loading = false;
+		});
+		builder.addCase(createGroup.rejected, (state, action) => {
+			state.error = action.payload;
+			state.loading = false;
 		});
 	}
 });

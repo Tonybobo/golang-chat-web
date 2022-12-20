@@ -20,5 +20,6 @@ export const ADD_FRIEND_URL = HOST + API_VERSION + '/user/add';
 export const MESSAGE_URL = HOST + '/message';
 
 export const GROUP_LIST_URL = HOST + API_VERSION + '/group/';
+export const GROUP_CREATE_URL = HOST + API_VERSION + '/group/save/';
 export const GROUP_USER_URL = HOST + '/group/user/';
 export const GROUP_JOIN_URL = HOST + API_VERSION + '/group/join/';
