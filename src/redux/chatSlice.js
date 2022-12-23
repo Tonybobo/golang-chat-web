@@ -4,12 +4,15 @@ import {
 	createGroup,
 	getFriends,
 	searchUsersAndGroups,
-	selectFirstFriends
+	selectFirstFriends,
+	selectFriend,
+	updateGroupDetail,
+	uploadGroupAvatar
 } from './actions/chat';
 
 const initialState = {
 	open: false,
-	friends: [],
+	friends: {},
 	error: '',
 	search: [],
 	selectUser: {},
@@ -33,8 +36,7 @@ const chatSlice = createSlice({
 
 	extraReducers: (builder) => {
 		builder.addCase(getFriends.fulfilled, (state, action) => {
-			state.friends = [];
-			state.friends = [...action.payload];
+			state.friends = action.payload;
 		});
 		builder.addCase(getFriends.rejected, (state, action) => {
 			state.error = action.payload;
@@ -52,18 +54,39 @@ const chatSlice = createSlice({
 			state.error = action.payload;
 		});
 		builder.addCase(addFriend.fulfilled, (state, action) => {
-			state.friends.push(action.payload);
+			const { uid } = action.payload;
+			state.friends[uid] = action.payload;
 		});
 		builder.addCase(addFriend.rejected, (state, action) => {
 			state.error = action.payload;
 		});
 		builder.addCase(createGroup.fulfilled, (state, action) => {
-			state.friends.push(action.payload);
+			const { uid } = action.payload;
+			state.friends[uid] = action.payload;
 			state.loading = false;
 		});
 		builder.addCase(createGroup.rejected, (state, action) => {
 			state.error = action.payload;
 			state.loading = false;
+		});
+		builder.addCase(selectFriend, (state, action) => {
+			state.selectUser = action.payload;
+		});
+		builder.addCase(uploadGroupAvatar.fulfilled, (state, action) => {
+			const { uid } = action.payload;
+			state.selectUser = action.payload;
+			state.friends[uid] = action.payload;
+		});
+		builder.addCase(uploadGroupAvatar.rejected, (state, action) => {
+			state.error = action.payload;
+		});
+		builder.addCase(updateGroupDetail.fulfilled, (state, action) => {
+			const { uid } = action.payload;
+			state.selectUser = action.payload;
+			state.friends[uid] = action.payload;
+		});
+		builder.addCase(updateGroupDetail.rejected, (state, action) => {
+			state.error = action.payload;
 		});
 	}
 });

@@ -1,11 +1,14 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import {
 	USER_URL,
 	SEARCH_URL,
 	GROUP_LIST_URL,
 	ADD_FRIEND_URL,
 	GROUP_JOIN_URL,
-	GROUP_CREATE_URL
+	GROUP_CREATE_URL,
+	GROUP_UPLOAD_AVATAR_URL,
+	GROUP_UPDATE_DETAIL,
+	GROUP_MEMBER
 } from '../../utils/Constant';
 import axios from 'axios';
 
@@ -14,7 +17,7 @@ export const selectFirstFriends = createAsyncThunk(
 	async (data, thunkAPI) => {
 		try {
 			const { friends } = thunkAPI.getState().chats;
-			return friends[0];
+			return Object.values(friends)[0];
 		} catch (err) {
 			return thunkAPI.rejectWithValue(err.response.data.Error);
 		}
@@ -27,16 +30,29 @@ export const getFriends = createAsyncThunk(
 		try {
 			const { users } = thunkAPI.getState().users;
 			const { data } = await axios.get(USER_URL + `friends?uid=${users.uid}`);
-			const friends = data.data?.map((element) => {
-				element.type = 1;
-				return element;
-			});
+			const friends = data.data
+				? data.data.map((element) => {
+						element.type = 1;
+						return element;
+				  })
+				: [];
+
 			const response = await axios.get(GROUP_LIST_URL + `${users.uid}`);
-			const groups = response.data?.data[0]?.group.map((element) => {
-				element.type = 2;
-				return element;
-			});
-			return friends.concat(groups);
+			const groups = response.data.data[0]?.group
+				? response.data.data[0]?.group.map((element) => {
+						element.type = 2;
+						return element;
+				  })
+				: [];
+			const hash = Object.assign(
+				{},
+				...friends.map((friend) => ({
+					[friend.uid]: friend
+				})),
+				...groups.map((group) => ({ [group.uid]: group }))
+			);
+
+			return hash;
 		} catch (err) {
 			return thunkAPI.rejectWithValue(err.response.data.Error);
 		}
@@ -107,3 +123,46 @@ export const createGroup = createAsyncThunk(
 		}
 	}
 );
+
+export const uploadGroupAvatar = createAsyncThunk(
+	'panel/uploadGroupAvatar',
+	async (data, thunkAPI) => {
+		try {
+			const { uid } = thunkAPI.getState().chats.selectUser;
+			const response = await axios.post(GROUP_UPLOAD_AVATAR_URL + uid, data);
+			response.data.data.type = 2;
+			return response.data.data;
+		} catch (err) {
+			return thunkAPI.rejectWithValue(err.response.data.Error);
+		}
+	}
+);
+
+export const updateGroupDetail = createAsyncThunk(
+	'panel/editGroupDetail',
+	async (data, thunkAPI) => {
+		try {
+			const { uid } = thunkAPI.getState().chats.selectUser;
+			const response = await axios.post(GROUP_UPDATE_DETAIL + uid, data);
+			response.data.data.type = 2;
+			return response.data.data;
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error.response.data.Error);
+		}
+	}
+);
+
+export const getGroupMembers = createAsyncThunk(
+	'panel/getGroupMembers',
+	async (data, thunkAPI) => {
+		try {
+			const { uid } = thunkAPI.getState().chats.selectUser;
+			const response = await axios.get(GROUP_MEMBER + uid);
+			console.log(response);
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error.response.data.Error);
+		}
+	}
+);
+
+export const selectFriend = createAction('panel/SelectFriend');

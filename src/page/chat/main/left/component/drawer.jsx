@@ -224,7 +224,7 @@ export default function LeftDrawer() {
 						borderRadius: 2
 					}
 				}}>
-				{friends?.map((friend) => (
+				{Object.values(friends).map((friend) => (
 					<Friends
 						key={friend.uid}
 						uid={friend.uid}
@@ -232,6 +232,8 @@ export default function LeftDrawer() {
 						avatar={friend.avatar}
 						name={friend.name}
 						type={friend.type}
+						userId={friend?.userId}
+						notice={friend?.notice}
 					/>
 				))}
 			</List>

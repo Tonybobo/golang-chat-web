@@ -43,10 +43,6 @@ export default function GroupModal({ open, handleModalClose }) {
 			aria-describedby="modal-modal-description">
 			<Box sx={style}>
 				<Box
-					style={{
-						display: 'flex'
-					}}></Box>
-				<Box
 					component="form"
 					onSubmit={handleSubmitInfo}
 					sx={{

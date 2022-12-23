@@ -23,3 +23,7 @@ export const GROUP_LIST_URL = HOST + API_VERSION + '/group/';
 export const GROUP_CREATE_URL = HOST + API_VERSION + '/group/save/';
 export const GROUP_USER_URL = HOST + '/group/user/';
 export const GROUP_JOIN_URL = HOST + API_VERSION + '/group/join/';
+export const GROUP_UPLOAD_AVATAR_URL = HOST + API_VERSION + '/group/upload/';
+export const GROUP_UPDATE_DETAIL = HOST + API_VERSION + '/group/edit/';
+
+export const GROUP_MEMBER = HOST + API_VERSION + '/group/user/';

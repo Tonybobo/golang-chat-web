@@ -1,14 +1,24 @@
 import { ListItem, ListItemButton, Avatar, ListItemText } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectFriend } from '../../../../../redux/actions/chat';
 
-export default function Friends({ uid, username, avatar, name, type }) {
+export default function Friends({
+	uid,
+	username,
+	avatar,
+	name,
+	type,
+	userId,
+	notice
+}) {
 	const open = useSelector((state) => state.chats.open);
-	const handleSelectFriends = () => {
-		console.log(uid, username, avatar, name, type);
-	};
+	const dispatch = useDispatch();
+
 	return (
 		<ListItem
-			onClick={handleSelectFriends}
+			onClick={() =>
+				dispatch(selectFriend({ uid, username, avatar, name, type , userId , notice}))
+			}
 			key={uid}
 			disablePadding
 			sx={{ display: 'block' }}>
