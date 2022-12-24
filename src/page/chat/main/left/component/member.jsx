@@ -6,11 +6,15 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import { Box } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { getGroupMembers } from '../../../../../redux/actions/chat';
 
 export default function GroupMember() {
 	const dispatch = useDispatch();
-	useEffect(() => {});
+	const { selectUser } = useSelector((state) => state.chats);
+	useEffect(() => {
+		dispatch(getGroupMembers());
+	}, [dispatch]);
 	return (
 		<Box sx={{ height: 100, width: '100%' }}>
 			<List
@@ -23,20 +27,21 @@ export default function GroupMember() {
 						borderRadius: 2
 					}
 				}}>
-				<ListItem alignItems="flex-start">
-					<ListItemAvatar>
-						<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-					</ListItemAvatar>
-					<ListItemText primary="Brunch this weekend?" />
-				</ListItem>
-				<Divider variant="inset" component="li" />
-				<ListItem alignItems="flex-start">
-					<ListItemAvatar>
-						<Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-					</ListItemAvatar>
-					<ListItemText primary="Summer BBQ" />
-				</ListItem>
-				<Divider variant="fullWidth" component="li" />
+				{selectUser.members?.map((member) => (
+					<>
+						<ListItem key={member.uid} alignItems="flex-start">
+							<ListItemAvatar>
+								<Avatar alt={member.username} src={member.avatar} />
+							</ListItemAvatar>
+							<ListItemText
+								sx={{ marginLeft: 2 }}
+								primary={member.username}
+								secondary={member.name}
+							/>
+						</ListItem>
+						<Divider variant="fullWidth" component="li" />
+					</>
+				))}
 			</List>
 		</Box>
 	);

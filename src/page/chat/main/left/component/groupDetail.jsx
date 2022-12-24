@@ -90,8 +90,7 @@ export default function DetailModal() {
 						<Avatar
 							sx={{
 								width: '50px',
-								height: '50px',
-								marginRight: 2
+								height: '50px'
 							}}
 							src={selectedUser.avatar}
 							alt="avatar"
@@ -109,7 +108,12 @@ export default function DetailModal() {
 									onChange={handleUpload}
 									hidden
 								/>
-								<PhotoCamera />
+								<PhotoCamera
+									sx={{
+										marginTop: 2,
+										p: 0
+									}}
+								/>
 							</IconButton>
 						)}
 					</Box>

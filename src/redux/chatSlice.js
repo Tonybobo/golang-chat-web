@@ -3,6 +3,7 @@ import {
 	addFriend,
 	createGroup,
 	getFriends,
+	getGroupMembers,
 	searchUsersAndGroups,
 	selectFirstFriends,
 	selectFriend,
@@ -87,6 +88,9 @@ const chatSlice = createSlice({
 		});
 		builder.addCase(updateGroupDetail.rejected, (state, action) => {
 			state.error = action.payload;
+		});
+		builder.addCase(getGroupMembers.fulfilled, (state, action) => {
+			state.selectUser.members = action.payload;
 		});
 	}
 });

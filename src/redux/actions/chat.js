@@ -155,13 +155,10 @@ export const updateGroupDetail = createAsyncThunk(
 export const getGroupMembers = createAsyncThunk(
 	'panel/getGroupMembers',
 	async (data, thunkAPI) => {
-		try {
-			const { uid } = thunkAPI.getState().chats.selectUser;
-			const response = await axios.get(GROUP_MEMBER + uid);
-			console.log(response);
-		} catch (error) {
-			return thunkAPI.rejectWithValue(error.response.data.Error);
-		}
+		const { uid } = thunkAPI.getState().chats.selectUser;
+		const response = await axios.get(GROUP_MEMBER + uid);
+
+		return response.data.data;
 	}
 );
 
