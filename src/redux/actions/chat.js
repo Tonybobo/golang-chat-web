@@ -1,4 +1,4 @@
-import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
 	USER_URL,
 	SEARCH_URL,
@@ -8,7 +8,8 @@ import {
 	GROUP_CREATE_URL,
 	GROUP_UPLOAD_AVATAR_URL,
 	GROUP_UPDATE_DETAIL,
-	GROUP_MEMBER
+	GROUP_MEMBER,
+	MESSAGE_URL
 } from '../../utils/Constant';
 import axios from 'axios';
 
@@ -162,4 +163,26 @@ export const getGroupMembers = createAsyncThunk(
 	}
 );
 
-export const selectFriend = createAction('panel/SelectFriend');
+export const selectFriend = createAsyncThunk(
+	'panel/SelectFriend',
+	async (data, thunkAPI) => {
+		try {
+			const { users } = thunkAPI.getState().users;
+			const request = {
+				messageType: data.type,
+				uid: users.uid,
+				friendUid: data.uid
+			};
+
+			const response = await axios.post(MESSAGE_URL, request);
+
+			return {
+				selectUser: data,
+				data: response.data.data,
+				pages: response.data.pages
+			};
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error.response.data.Error);
+		}
+	}
+);

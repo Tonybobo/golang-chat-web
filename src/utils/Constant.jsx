@@ -17,7 +17,7 @@ export const SEARCH_URL = HOST + API_VERSION + '/search/';
 export const USER_FRIEND_URL = HOST + '/friend';
 export const ADD_FRIEND_URL = HOST + API_VERSION + '/user/add';
 
-export const MESSAGE_URL = HOST + '/message';
+export const MESSAGE_URL = HOST + API_VERSION + '/messages';
 
 export const GROUP_LIST_URL = HOST + API_VERSION + '/group/';
 export const GROUP_CREATE_URL = HOST + API_VERSION + '/group/save/';

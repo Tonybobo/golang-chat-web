@@ -7,13 +7,22 @@ import router from './router/router';
 import { RouterProvider } from 'react-router';
 import { store } from './redux/store';
 import { Provider } from 'react-redux';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+const darkTheme = createTheme({
+	palette: {
+		mode: 'dark'
+	}
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<React.StrictMode>
-		<Provider store={store}>
-			<RouterProvider router={router} />
-		</Provider>
+		<ThemeProvider theme={darkTheme}>
+			<Provider store={store}>
+				<RouterProvider router={router} />
+			</Provider>
+		</ThemeProvider>
 	</React.StrictMode>
 );
 

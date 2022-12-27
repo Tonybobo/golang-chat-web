@@ -17,7 +17,11 @@ const initialState = {
 	error: '',
 	search: [],
 	selectUser: {},
-	loading: false
+	loading: false,
+	message: {
+		pages: 0,
+		messages: []
+	}
 };
 
 const chatSlice = createSlice({
@@ -70,8 +74,15 @@ const chatSlice = createSlice({
 			state.error = action.payload;
 			state.loading = false;
 		});
-		builder.addCase(selectFriend, (state, action) => {
-			state.selectUser = action.payload;
+		builder.addCase(selectFriend.fulfilled, (state, action) => {
+			state.selectUser = action.payload.selectUser;
+			state.message.pages = action.payload.pages;
+			state.message.messages = action.payload.data
+				? [...action.payload.data]
+				: [];
+		});
+		builder.addCase(selectFriend.rejected, (state, action) => {
+			state.error = action.payload;
 		});
 		builder.addCase(uploadGroupAvatar.fulfilled, (state, action) => {
 			const { uid } = action.payload;

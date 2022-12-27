@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { IP_PORT, API_VERSION } from '../../utils/Constant';
 import protobuf from '../../proto/proto';
 import { useParams } from 'react-router-dom';
-import MiniDrawer from './main/left';
+import MiniDrawer from './main/center';
 import { Container } from '@mui/system';
 import TransitionMsg from './main/right/alert';
 
@@ -46,9 +46,11 @@ export default function Panel() {
 		};
 	};
 	return (
-		<Container>
-			<MiniDrawer />
-			<TransitionMsg />
-		</Container>
+		<>
+			<Container>
+				<MiniDrawer />
+				<TransitionMsg />
+			</Container>
+		</>
 	);
 }
