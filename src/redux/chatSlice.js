@@ -4,6 +4,7 @@ import {
 	createGroup,
 	getFriends,
 	getGroupMembers,
+	getMoreMessages,
 	searchUsersAndGroups,
 	selectFirstFriends,
 	selectFriend,
@@ -102,6 +103,10 @@ const chatSlice = createSlice({
 		});
 		builder.addCase(getGroupMembers.fulfilled, (state, action) => {
 			state.selectUser.members = action.payload;
+		});
+		builder.addCase(getMoreMessages.fulfilled, (state, action) => {
+			let message = state.message.messages;
+			state.message.messages = [...message, ...action.payload.data];
 		});
 	}
 });

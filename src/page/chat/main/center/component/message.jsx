@@ -1,63 +1,71 @@
 import {
-	Avatar,
-	Divider,
-	List,
-	ListItem,
 	ListItemAvatar,
 	ListItemText,
-	Typography
+	Typography,
+	Avatar,
+	ListItem
 } from '@mui/material';
-import { useState } from 'react';
-import InfiniteScroll from 'react-infinite-scroller';
 
-export default function Messages() {
+import dayjs from 'dayjs';
+
+export const MessageLeft = ({ content, timeStamp, sender }) => {
 	return (
-		<InfiniteScroll>
-			<List
+		<ListItem sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+			<ListItemAvatar
 				sx={{
-					width: '100%'
+					display: 'flex',
+					alignItems: 'center',
+					width: 200,
+					border: 1,
+					borderRadius: 1,
+					borderBlockColor: 'lightgray',
+					paddingX: 1,
+					paddingY: 0.5
 				}}>
-				<ListItem sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-					<ListItemAvatar sx={{ display: 'flex', alignItems: 'center' }}>
-						<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-					</ListItemAvatar>
-				</ListItem>
-				<ListItem alignItems="flex-start">
-					<ListItemAvatar>
-						<Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-					</ListItemAvatar>
-				</ListItem>
-				<ListItem alignItems="flex-start">
-					<ListItemAvatar>
-						<Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-					</ListItemAvatar>
-				</ListItem>
-				<ListItem alignItems="flex-start">
-					<ListItemAvatar>
-						<Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-					</ListItemAvatar>
-				</ListItem>
-				<ListItem alignItems="flex-start">
-					<ListItemAvatar>
-						<Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-					</ListItemAvatar>
-				</ListItem>
-				<ListItem alignItems="flex-start">
-					<ListItemAvatar>
-						<Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-					</ListItemAvatar>
-				</ListItem>
-				<ListItem alignItems="flex-start">
-					<ListItemAvatar>
-						<Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-					</ListItemAvatar>
-				</ListItem>
-				<ListItem alignItems="flex-start">
-					<ListItemAvatar>
-						<Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-					</ListItemAvatar>
-				</ListItem>
-			</List>
-		</InfiniteScroll>
+				<Avatar
+					alt={sender.username}
+					src={sender.avatar}
+					sx={{ marginRight: 2, alignSelf: 'flex-start' }}
+				/>
+				<ListItemText
+					primary={<Typography variant="body2">{content}</Typography>}
+					secondary={
+						<Typography variant="subtitle2" color="gray" textAlign="right">
+							{dayjs(timeStamp).format('DD/MM/YY')}
+						</Typography>
+					}></ListItemText>
+			</ListItemAvatar>
+		</ListItem>
 	);
-}
+};
+
+export const MessageRight = ({ content, timeStamp, sender }) => {
+	return (
+		<ListItem sx={{ display: 'flex', justifyContent: 'flex-end', border: 1 }}>
+			<ListItemAvatar
+				sx={{
+					display: 'flex',
+					alignItems: 'center',
+					width: 200,
+					border: 1,
+					borderRadius: 1,
+					borderBlockColor: 'lightgray',
+					paddingX: 1,
+					paddingY: 0.5
+				}}>
+				<Avatar
+					alt={sender.username}
+					src={sender.avatar}
+					sx={{ marginRight: 2, alignSelf: 'flex-start' }}
+				/>
+				<ListItemText
+					primary={<Typography variant="body2">{content}</Typography>}
+					secondary={
+						<Typography variant="subtitle2" color="gray" textAlign="right">
+							{dayjs(timeStamp).format('DD/MM/YY')}
+						</Typography>
+					}></ListItemText>
+			</ListItemAvatar>
+		</ListItem>
+	);
+};

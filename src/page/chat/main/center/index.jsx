@@ -5,7 +5,7 @@ import LeftDrawer from './component/drawer';
 import TopBar from './component/appBar';
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import Messages from './component/message';
+import MessageList from './component/messageList';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
 	display: 'flex',
@@ -24,7 +24,7 @@ export default function MiniDrawer() {
 			<LeftDrawer />
 			<Box component="main" sx={{ flexGrow: 1, p: 0 }}>
 				<DrawerHeader />
-				<Messages />
+				<MessageList />
 			</Box>
 		</Box>
 	);

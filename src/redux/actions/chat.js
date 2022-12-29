@@ -178,6 +178,32 @@ export const selectFriend = createAsyncThunk(
 
 			return {
 				selectUser: data,
+				data: response.data.data.reverse(),
+				pages: response.data.pages
+			};
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error.response.data.Error);
+		}
+	}
+);
+
+export const getMoreMessages = createAsyncThunk(
+	'panel/getMoreMessage',
+	async (data, thunkAPI) => {
+		try {
+			const { users } = thunkAPI.getState().users;
+			const { selectUser } = thunkAPI.getState().chats;
+			const request = {
+				messageType: selectUser.type,
+				uid: users.uid,
+				friendUid: selectUser.uid
+			};
+			const response = await axios.post(
+				MESSAGE_URL + `?pages=${data}`,
+				request
+			);
+
+			return {
 				data: response.data.data,
 				pages: response.data.pages
 			};
