@@ -176,10 +176,13 @@ export const selectFriend = createAsyncThunk(
 
 			const response = await axios.post(MESSAGE_URL, request);
 
+			const message = response.data?.data?.reverse();
+			const pages = response.data.pages;
+
 			return {
 				selectUser: data,
-				data: response.data.data.reverse(),
-				pages: response.data.pages
+				data: message ?? [],
+				pages: pages ?? 0
 			};
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response.data.Error);
@@ -192,7 +195,9 @@ export const getMoreMessages = createAsyncThunk(
 	async (data, thunkAPI) => {
 		try {
 			const { users } = thunkAPI.getState().users;
-			const { selectUser } = thunkAPI.getState().chats;
+			const { selectUser, totalPages } = thunkAPI.getState().chats;
+
+			if (data > totalPages) return;
 			const request = {
 				messageType: selectUser.type,
 				uid: users.uid,
@@ -203,10 +208,9 @@ export const getMoreMessages = createAsyncThunk(
 				request
 			);
 
-			return {
-				data: response.data.data,
-				pages: response.data.pages
-			};
+			const message = response.data?.data?.reverse();
+
+			return message ?? [];
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response.data.Error);
 		}

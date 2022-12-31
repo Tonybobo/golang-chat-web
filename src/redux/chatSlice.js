@@ -19,10 +19,9 @@ const initialState = {
 	search: [],
 	selectUser: {},
 	loading: false,
-	message: {
-		pages: 0,
-		messages: []
-	}
+	messages: [],
+	pages: 1,
+	totalPages: 0
 };
 
 const chatSlice = createSlice({
@@ -76,11 +75,10 @@ const chatSlice = createSlice({
 			state.loading = false;
 		});
 		builder.addCase(selectFriend.fulfilled, (state, action) => {
+			state.pages = 1;
 			state.selectUser = action.payload.selectUser;
-			state.message.pages = action.payload.pages;
-			state.message.messages = action.payload.data
-				? [...action.payload.data]
-				: [];
+			state.totalPages = action.payload.pages;
+			state.messages = action.payload.data;
 		});
 		builder.addCase(selectFriend.rejected, (state, action) => {
 			state.error = action.payload;
@@ -105,8 +103,9 @@ const chatSlice = createSlice({
 			state.selectUser.members = action.payload;
 		});
 		builder.addCase(getMoreMessages.fulfilled, (state, action) => {
-			let message = state.message.messages;
-			state.message.messages = [...message, ...action.payload.data];
+			let message = state.messages;
+			state.messages = [...action.payload, ...message];
+			state.pages++;
 		});
 	}
 });
