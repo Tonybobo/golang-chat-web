@@ -6,7 +6,9 @@ import { clearError } from '../../../../redux/chatSlice';
 export default function TransitionMsg() {
 	const error = useSelector((state) => state.chats.error);
 	const dispatch = useDispatch();
-	return (
+	return error === '' ? (
+		<></>
+	) : (
 		<Box
 			sx={{
 				width: '30%',

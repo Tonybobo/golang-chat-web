@@ -27,8 +27,9 @@ export default function Login() {
 			login({ username: data.get('username'), password: data.get('password') })
 		)
 			.unwrap()
-			.then(() => {
-				navigate('/panel/' + data.get('username'));
+			.then((result) => {
+				console.log(result);
+				navigate('/panel/' + result.data.uid);
 			});
 	};
 

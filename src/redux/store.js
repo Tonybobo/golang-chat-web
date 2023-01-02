@@ -6,5 +6,9 @@ export const store = configureStore({
 	reducer: {
 		users: userSlice,
 		chats: chatSlice
-	}
+	},
+	middleware: (getDefaultMiddleware) =>
+		getDefaultMiddleware({
+			serializableCheck: false
+		})
 });

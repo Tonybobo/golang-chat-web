@@ -22,11 +22,16 @@ export const MessageLeft = ({ content, timeStamp, sender }) => {
 					paddingX: 1,
 					paddingY: 0.5
 				}}>
-				<Avatar
-					alt={sender.username}
-					src={sender.avatar}
-					sx={{ marginRight: 2, alignSelf: 'flex-start' }}
-				/>
+				{sender ? (
+					<Avatar
+						alt={sender.username}
+						src={sender.avatar}
+						sx={{ marginRight: 2, alignSelf: 'flex-start' }}
+					/>
+				) : (
+					<></>
+				)}
+
 				<ListItemText
 					primary={<Typography variant="body2">{content}</Typography>}
 					secondary={
@@ -53,11 +58,15 @@ export const MessageRight = ({ content, timeStamp, sender }) => {
 					paddingX: 1,
 					paddingY: 0.5
 				}}>
-				<Avatar
-					alt={sender.username}
-					src={sender.avatar}
-					sx={{ marginRight: 2, alignSelf: 'flex-start' }}
-				/>
+				{sender ? (
+					<Avatar
+						alt={sender.username}
+						src={sender.avatar}
+						sx={{ marginRight: 2, alignSelf: 'flex-start' }}
+					/>
+				) : (
+					<></>
+				)}
 				<ListItemText
 					primary={<Typography variant="body2">{content}</Typography>}
 					secondary={

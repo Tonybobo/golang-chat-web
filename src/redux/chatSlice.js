@@ -8,6 +8,7 @@ import {
 	searchUsersAndGroups,
 	selectFirstFriends,
 	selectFriend,
+	setSocket,
 	updateGroupDetail,
 	uploadGroupAvatar
 } from './actions/chat';
@@ -15,6 +16,7 @@ import {
 const initialState = {
 	open: false,
 	friends: {},
+	socket: null,
 	error: '',
 	search: [],
 	selectUser: {},
@@ -53,7 +55,9 @@ const chatSlice = createSlice({
 			state.error = action.payload;
 		});
 		builder.addCase(selectFirstFriends.fulfilled, (state, action) => {
-			state.selectUser = action.payload;
+			state.selectUser = action.payload.friend;
+			state.totalPages = action.payload.pages;
+			state.messages = [...action.payload.data];
 		});
 		builder.addCase(selectFirstFriends.rejected, (state, action) => {
 			state.error = action.payload;
@@ -106,6 +110,9 @@ const chatSlice = createSlice({
 			let message = state.messages;
 			state.messages = [...action.payload, ...message];
 			state.pages++;
+		});
+		builder.addCase(setSocket, (state, action) => {
+			state.socket = action.payload;
 		});
 	}
 });

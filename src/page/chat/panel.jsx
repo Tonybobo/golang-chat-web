@@ -5,18 +5,21 @@ import { useParams } from 'react-router-dom';
 import MiniDrawer from './main/center';
 import { Container } from '@mui/system';
 import TransitionMsg from './main/right/alert';
+import { useDispatch } from 'react-redux';
+import { setSocket } from '../../redux/actions/chat';
 
 export default function Panel() {
 	let socket;
-	const { user } = useParams();
+	const { uid } = useParams();
+	console.log(uid);
+	const dispatch = useDispatch();
 	useEffect(() => {
 		connection();
 	});
 
 	const connection = () => {
-		console.log('setting connection');
 		socket = new WebSocket(
-			'ws://' + IP_PORT + API_VERSION + '/socket.io?username=' + user
+			'ws://' + IP_PORT + API_VERSION + '/socket.io?uid=' + uid
 		);
 		socket.onopen = async () => {
 			let data = {
@@ -29,6 +32,8 @@ export default function Panel() {
 				const messageBuffer = message.create(data);
 				socket.send(message.encode(messageBuffer).finish());
 			}
+
+			dispatch(setSocket(socket));
 		};
 		socket.onmessage = (message) => {
 			let messageProto = protobuf.lookup('protocol.Message');

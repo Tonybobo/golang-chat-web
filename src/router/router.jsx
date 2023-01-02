@@ -17,7 +17,7 @@ const router = createBrowserRouter([
 		element: <ProtectedRoute />,
 		children: [
 			{
-				path: 'panel/:user',
+				path: 'panel/:uid',
 				element: <Panel />
 			}
 		]

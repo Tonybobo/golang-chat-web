@@ -1,4 +1,4 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import {
 	USER_URL,
 	SEARCH_URL,
@@ -13,12 +13,29 @@ import {
 } from '../../utils/Constant';
 import axios from 'axios';
 
+export const setSocket = createAction('panel/setSocket');
+
 export const selectFirstFriends = createAsyncThunk(
 	'panel/selectFirstFriends',
-	async (data, thunkAPI) => {
+	async (_, thunkAPI) => {
 		try {
 			const { friends } = thunkAPI.getState().chats;
-			return Object.values(friends)[0];
+			const { users } = thunkAPI.getState().users;
+			const firstFriend = Object.values(friends)[0];
+			const request = {
+				messageType: firstFriend.type,
+				uid: users.uid,
+				friendUid: firstFriend.uid
+			};
+			const response = await axios.post(MESSAGE_URL, request);
+			const message = response.data?.data?.reverse();
+			const pages = response.data?.pages;
+
+			return {
+				friend: firstFriend,
+				data: message ?? [],
+				pages: pages ?? 0
+			};
 		} catch (err) {
 			return thunkAPI.rejectWithValue(err.response.data.Error);
 		}

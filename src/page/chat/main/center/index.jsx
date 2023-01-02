@@ -6,6 +6,7 @@ import TopBar from './component/appBar';
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import MessageList from './component/messageList';
+import ChatBox from './component/ChatBox';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
 	display: 'flex',
@@ -22,9 +23,22 @@ export default function MiniDrawer() {
 			<CssBaseline />
 			<TopBar />
 			<LeftDrawer />
-			<Box component="main" sx={{ flexGrow: 1, p: 0 }}>
+			<Box
+				component="main"
+				sx={{
+					flexGrow: 1,
+					p: 0,
+					overflow: 'hidden',
+					display: 'flex',
+					flexDirection: 'column',
+					height: '100vh',
+					justifyContent: 'space-between'
+				}}>
 				<DrawerHeader />
 				<MessageList />
+				<Box component="div" sx={{ marginBottom: 2 }}>
+					<ChatBox />
+				</Box>
 			</Box>
 		</Box>
 	);
