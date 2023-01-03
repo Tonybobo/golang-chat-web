@@ -1,18 +1,17 @@
 import InfiniteScroll from 'react-infinite-scroller';
 import { useSelector, useDispatch } from 'react-redux';
 import { getMoreMessages } from '../../../../../redux/actions/chat';
-import { MessageLeft, MessageRight } from './message';
+import { AudioMessage } from './message';
 import { Box } from '@mui/material';
 
 export default function MessageList() {
 	const { users } = useSelector((state) => state.users);
 
-	const { messages, pages, totalPages, selectUser } = useSelector(
-		(state) => state.chats
-	);
+	const { messages, pages, totalPages } = useSelector((state) => state.chats);
+	console.log(messages);
 
 	const dispatch = useDispatch();
-	console.log(messages);
+
 	const handleLoadMore = () => {
 		dispatch(getMoreMessages(pages + 1));
 	};
@@ -37,40 +36,31 @@ export default function MessageList() {
 				hasMore={pages < totalPages}
 				useWindow={false}
 				loader={<h4>Loading...</h4>}>
-				{selectUser.type === 1 &&
-					messages.map((message) =>
-						message.fromUserId === users.uid ? (
-							<MessageRight
-								content={message.content}
-								key={message.createdAt}
-								timeStamp={message.createdAt}
-							/>
-						) : (
-							<MessageLeft
-								content={message.content}
-								key={message.createdAt}
-								timeStamp={message.createdAt}
-							/>
-						)
-					)}
-				{selectUser.type === 2 &&
-					messages.map((message) =>
-						message.fromUserId === users.uid ? (
-							<MessageRight
-								content={message.content}
-								key={message.createdAt}
-								sender={message.from}
-								timeStamp={message.createdAt}
-							/>
-						) : (
-							<MessageLeft
-								content={message.content}
-								key={message.createdAt}
-								sender={message.from}
-								timeStamp={message.createdAt}
-							/>
-						)
-					)}
+				{messages.map((message) =>
+					message.from.uid === users.uid ? (
+						<AudioMessage
+							timeStamp={message.createdAt}
+							key={message.createdAt}
+							url={message.url}
+							flexDirection="flex-end"
+						/>
+					) : (
+						// <Message
+						// 	content={message.content}
+						// 	key={message.createdAt}
+						// 	sender={message.from}
+						// 	timeStamp={message.createdAt}
+						// 	flexDirection="flex-end"
+						// />
+						<AudioMessage
+							content={message.content}
+							key={message.createdAt}
+							timeStamp={message.createdAt}
+							url={message.url}
+							flexDirection="flex-start"
+						/>
+					)
+				)}
 			</InfiniteScroll>
 		</Box>
 	);
