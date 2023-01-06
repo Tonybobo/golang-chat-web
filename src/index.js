@@ -17,13 +17,14 @@ const darkTheme = createTheme({
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-	<React.StrictMode>
-		<ThemeProvider theme={darkTheme}>
-			<Provider store={store}>
-				<RouterProvider router={router} />
-			</Provider>
-		</ThemeProvider>
-	</React.StrictMode>
+	//TODO: Uncomment StrictMode later during deployment
+	// <React.StrictMode>
+	<ThemeProvider theme={darkTheme}>
+		<Provider store={store}>
+			<RouterProvider router={router} />
+		</Provider>
+	</ThemeProvider>
+	// </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

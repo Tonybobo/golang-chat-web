@@ -28,7 +28,6 @@ export default function Login() {
 		)
 			.unwrap()
 			.then((result) => {
-				console.log(result);
 				navigate('/panel/' + result.data.uid);
 			});
 	};

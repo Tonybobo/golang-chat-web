@@ -1,14 +1,13 @@
 import InfiniteScroll from 'react-infinite-scroller';
 import { useSelector, useDispatch } from 'react-redux';
 import { getMoreMessages } from '../../../../../redux/actions/chat';
-import { AudioMessage } from './message';
+import { Message } from './message';
 import { Box } from '@mui/material';
 
 export default function MessageList() {
 	const { users } = useSelector((state) => state.users);
 
 	const { messages, pages, totalPages } = useSelector((state) => state.chats);
-	console.log(messages);
 
 	const dispatch = useDispatch();
 
@@ -38,26 +37,21 @@ export default function MessageList() {
 				loader={<h4>Loading...</h4>}>
 				{messages.map((message) =>
 					message.from.uid === users.uid ? (
-						<AudioMessage
+						<Message
 							timeStamp={message.createdAt}
 							key={message.createdAt}
+							sender={message.from}
 							url={message.url}
-							flexDirection="flex-end"
+							content={message.content}
+							flexDirection="flex-start"
 						/>
 					) : (
-						// <Message
-						// 	content={message.content}
-						// 	key={message.createdAt}
-						// 	sender={message.from}
-						// 	timeStamp={message.createdAt}
-						// 	flexDirection="flex-end"
-						// />
-						<AudioMessage
-							content={message.content}
-							key={message.createdAt}
+						<Message
 							timeStamp={message.createdAt}
+							key={message.createdAt}
+							sender={message.from}
 							url={message.url}
-							flexDirection="flex-start"
+							flexDirection="flex-end"
 						/>
 					)
 				)}

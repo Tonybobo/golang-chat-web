@@ -11,7 +11,7 @@ import { setSocket } from '../../redux/actions/chat';
 export default function Panel() {
 	let socket;
 	const { uid } = useParams();
-	console.log(uid);
+
 	const dispatch = useDispatch();
 	useEffect(() => {
 		connection();
