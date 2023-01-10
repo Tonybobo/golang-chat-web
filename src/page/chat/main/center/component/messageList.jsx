@@ -1,7 +1,7 @@
 import InfiniteScroll from 'react-infinite-scroller';
 import { useSelector, useDispatch } from 'react-redux';
 import { getMoreMessages } from '../../../../../redux/actions/chat';
-import { Message } from './message';
+import { SwitchComponent } from './message';
 import { Box } from '@mui/material';
 
 export default function MessageList() {
@@ -35,26 +35,7 @@ export default function MessageList() {
 				hasMore={pages < totalPages}
 				useWindow={false}
 				loader={<h4>Loading...</h4>}>
-				{messages.map((message) =>
-					message.from.uid === users.uid ? (
-						<Message
-							timeStamp={message.createdAt}
-							key={message.createdAt}
-							sender={message.from}
-							url={message.url}
-							content={message.content}
-							flexDirection="flex-start"
-						/>
-					) : (
-						<Message
-							timeStamp={message.createdAt}
-							key={message.createdAt}
-							sender={message.from}
-							url={message.url}
-							flexDirection="flex-end"
-						/>
-					)
-				)}
+				{messages.map((message) => SwitchComponent(message, users.uid))}
 			</InfiniteScroll>
 		</Box>
 	);

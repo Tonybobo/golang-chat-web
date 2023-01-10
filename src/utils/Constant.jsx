@@ -1,7 +1,7 @@
 export const API_VERSION = '/api';
 
-const PROTOCOL = 'http://';
-export const IP_PORT = 'localhost:8888';
+const PROTOCOL = 'https://';
+export const IP_PORT = 'go-chat.fly.dev';
 //local
 export const HOST = PROTOCOL + IP_PORT;
 

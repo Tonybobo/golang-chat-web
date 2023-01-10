@@ -11,3 +11,14 @@ code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
 		monospace;
 }
+audio::-webkit-media-controls-current-time-display {
+	display: none;
+}
+
+audio::-webkit-media-controls-time-remaining-display {
+	display: none;
+}
+
+audio::-webkit-media-controls-timeline {
+	width: '50px';
+}
