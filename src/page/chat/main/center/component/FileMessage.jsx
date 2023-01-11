@@ -1,14 +1,18 @@
 import {
 	ListItemText,
 	Typography,
-	Avatar,
 	ListItem,
-	Paper
+	Paper,
+	Avatar,
+	Button
 } from '@mui/material';
-
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import dayjs from 'dayjs';
 
-export const MessageLeft = ({ content, timeStamp, sender }) => {
+export const FileMessageLeft = ({ url, timeStamp, sender }) => {
+	const decode = decodeURI(url);
+	const pathName = decode.split('/').pop();
+
 	return (
 		<ListItem sx={{ display: 'flex', justifyContent: 'flex-start' }}>
 			<Avatar
@@ -26,12 +30,12 @@ export const MessageLeft = ({ content, timeStamp, sender }) => {
 			<Paper
 				sx={{
 					display: 'flex',
-					alignItems: 'center',
-					width: 200,
+					flexDirection: 'column',
+					justifyContent: 'space-between',
+					width: 250,
 					borderBlockColor: 'lightgray',
 					position: 'relative',
-					paddingX: 2,
-					paddingY: 0,
+					bgcolor: 'transparent',
 					marginTop: 1,
 					marginLeft: 4,
 					'&::after': {
@@ -47,34 +51,50 @@ export const MessageLeft = ({ content, timeStamp, sender }) => {
 					}
 				}}
 				elevation={24}>
+				<Button
+					href={url}
+					download={pathName}
+					target="_blank"
+					variant="text"
+					sx={{
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center',
+						paddingTop: 2,
+						paddingBottom: 0
+					}}>
+					<PictureAsPdfIcon sx={{ marginRight: 1 }} />
+					<Typography variant="body2">{pathName}</Typography>
+				</Button>
+
 				<ListItemText
-					primary={<Typography variant="body2">{content}</Typography>}
 					secondary={
-						<Typography
-							variant="subtitle2"
-							color="gray"
-							textAlign="right"
-							sx={{ marginTop: 1 }}>
+						<Typography variant="subtitle2" color="gray" textAlign="right">
 							{dayjs(timeStamp).format('DD/MM/YY')}
 						</Typography>
 					}></ListItemText>
-				<ListItemText></ListItemText>
 			</Paper>
 		</ListItem>
 	);
 };
 
-export const MessageRight = ({ content, timeStamp }) => {
+export const FileMessageRight = ({ url, timeStamp }) => {
+	const decode = decodeURI(url);
+	const pathName = decode.split('/').pop();
+
 	return (
 		<ListItem sx={{ display: 'flex', justifyContent: 'flex-end' }}>
 			<Paper
 				sx={{
 					display: 'flex',
-					alignItems: 'center',
-					width: 200,
-					paddingX: 2,
-					paddingY: 0,
+					flexDirection: 'column',
+					justifyContent: 'space-between',
+					width: 250,
+					borderBlockColor: 'lightgray',
 					position: 'relative',
+					bgcolor: 'transparent',
+					marginTop: 1,
+					marginLeft: 4,
 					'&::after': {
 						position: 'absolute',
 						right: '-15px',
@@ -99,14 +119,25 @@ export const MessageRight = ({ content, timeStamp }) => {
 					}
 				}}
 				elevation={24}>
+				<Button
+					href={url}
+					download={pathName}
+					target="_blank"
+					variant="text"
+					sx={{
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center',
+						paddingTop: 2,
+						paddingBottom: 0
+					}}>
+					<PictureAsPdfIcon sx={{ marginRight: 1 }} />
+					<Typography variant="body2">{pathName}</Typography>
+				</Button>
+
 				<ListItemText
-					primary={<Typography variant="body2">{content}</Typography>}
 					secondary={
-						<Typography
-							variant="subtitle2"
-							color="gray"
-							textAlign="right"
-							sx={{ marginTop: 1 }}>
+						<Typography variant="subtitle2" color="gray" textAlign="right">
 							{dayjs(timeStamp).format('DD/MM/YY')}
 						</Typography>
 					}></ListItemText>

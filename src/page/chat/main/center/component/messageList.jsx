@@ -1,8 +1,9 @@
 import InfiniteScroll from 'react-infinite-scroller';
 import { useSelector, useDispatch } from 'react-redux';
 import { getMoreMessages } from '../../../../../redux/actions/chat';
-import { SwitchComponent } from './message';
+
 import { Box } from '@mui/material';
+import { SwitchComponent } from '../../../../../utils/switch';
 
 export default function MessageList() {
 	const { users } = useSelector((state) => state.users);

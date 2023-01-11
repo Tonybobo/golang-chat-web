@@ -5,10 +5,10 @@ import {
 	ListItem,
 	Paper
 } from '@mui/material';
-
 import dayjs from 'dayjs';
+import ReactPlayer from 'react-player/lazy';
 
-export const MessageLeft = ({ content, timeStamp, sender }) => {
+export const VideoMessageLeft = ({ url, timeStamp, sender }) => {
 	return (
 		<ListItem sx={{ display: 'flex', justifyContent: 'flex-start' }}>
 			<Avatar
@@ -26,12 +26,12 @@ export const MessageLeft = ({ content, timeStamp, sender }) => {
 			<Paper
 				sx={{
 					display: 'flex',
-					alignItems: 'center',
-					width: 200,
+					flexDirection: 'column',
+					justifyContent: 'space-between',
+					width: 250,
 					borderBlockColor: 'lightgray',
 					position: 'relative',
-					paddingX: 2,
-					paddingY: 0,
+					bgcolor: 'transparent',
 					marginTop: 1,
 					marginLeft: 4,
 					'&::after': {
@@ -46,9 +46,26 @@ export const MessageLeft = ({ content, timeStamp, sender }) => {
 						left: '-15px'
 					}
 				}}
-				elevation={24}>
+				elevation={0}>
+				<ReactPlayer
+					url={url}
+					playing
+					controls
+					width={250}
+					height={200}
+					light={true}
+					pip={false}
+					config={{
+						file: {
+							attributes: {
+								controlsList:
+									'nofullscreen nodownload noremoteplayback noplaybackrate"'
+							}
+						}
+					}}
+				/>
+
 				<ListItemText
-					primary={<Typography variant="body2">{content}</Typography>}
 					secondary={
 						<Typography
 							variant="subtitle2"
@@ -58,23 +75,24 @@ export const MessageLeft = ({ content, timeStamp, sender }) => {
 							{dayjs(timeStamp).format('DD/MM/YY')}
 						</Typography>
 					}></ListItemText>
-				<ListItemText></ListItemText>
 			</Paper>
 		</ListItem>
 	);
 };
 
-export const MessageRight = ({ content, timeStamp }) => {
+export const VideoMessageRight = ({ url, timeStamp }) => {
 	return (
 		<ListItem sx={{ display: 'flex', justifyContent: 'flex-end' }}>
 			<Paper
 				sx={{
 					display: 'flex',
-					alignItems: 'center',
-					width: 200,
-					paddingX: 2,
-					paddingY: 0,
+					flexDirection: 'column',
+					justifyContent: 'space-between',
+					width: 250,
+					borderBlockColor: 'lightgray',
 					position: 'relative',
+					marginTop: 1,
+					marginLeft: 4,
 					'&::after': {
 						position: 'absolute',
 						right: '-15px',
@@ -98,9 +116,26 @@ export const MessageRight = ({ content, timeStamp }) => {
 						right: '-19px'
 					}
 				}}
-				elevation={24}>
+				elevation={0}>
+				<ReactPlayer
+					url={url}
+					playing
+					controls
+					width={250}
+					height={200}
+					light={true}
+					pip={false}
+					config={{
+						file: {
+							attributes: {
+								controlsList:
+									'nofullscreen nodownload noremoteplayback noplaybackrate"'
+							}
+						}
+					}}
+				/>
+
 				<ListItemText
-					primary={<Typography variant="body2">{content}</Typography>}
 					secondary={
 						<Typography
 							variant="subtitle2"

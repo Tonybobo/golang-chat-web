@@ -1,14 +1,14 @@
 import {
 	ListItemText,
 	Typography,
-	Avatar,
 	ListItem,
-	Paper
+	Paper,
+	Avatar
 } from '@mui/material';
-
 import dayjs from 'dayjs';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
-export const MessageLeft = ({ content, timeStamp, sender }) => {
+export const ImageMessageLeft = ({ url, timeStamp, sender }) => {
 	return (
 		<ListItem sx={{ display: 'flex', justifyContent: 'flex-start' }}>
 			<Avatar
@@ -26,12 +26,12 @@ export const MessageLeft = ({ content, timeStamp, sender }) => {
 			<Paper
 				sx={{
 					display: 'flex',
-					alignItems: 'center',
-					width: 200,
+					flexDirection: 'column',
+					justifyContent: 'space-between',
+					width: 250,
 					borderBlockColor: 'lightgray',
 					position: 'relative',
-					paddingX: 2,
-					paddingY: 0,
+					bgcolor: 'transparent',
 					marginTop: 1,
 					marginLeft: 4,
 					'&::after': {
@@ -46,35 +46,33 @@ export const MessageLeft = ({ content, timeStamp, sender }) => {
 						left: '-15px'
 					}
 				}}
-				elevation={24}>
+				elevation={0}>
+				<LazyLoadImage alt={sender.from} src={url} width={250} height={200} />
+
 				<ListItemText
-					primary={<Typography variant="body2">{content}</Typography>}
 					secondary={
-						<Typography
-							variant="subtitle2"
-							color="gray"
-							textAlign="right"
-							sx={{ marginTop: 1 }}>
+						<Typography variant="subtitle2" color="gray" textAlign="right">
 							{dayjs(timeStamp).format('DD/MM/YY')}
 						</Typography>
 					}></ListItemText>
-				<ListItemText></ListItemText>
 			</Paper>
 		</ListItem>
 	);
 };
 
-export const MessageRight = ({ content, timeStamp }) => {
+export const ImageMessageRight = ({ url, timeStamp, sender }) => {
 	return (
 		<ListItem sx={{ display: 'flex', justifyContent: 'flex-end' }}>
 			<Paper
 				sx={{
 					display: 'flex',
-					alignItems: 'center',
-					width: 200,
-					paddingX: 2,
-					paddingY: 0,
+					flexDirection: 'column',
+					justifyContent: 'space-between',
+					width: 250,
+					borderBlockColor: 'lightgray',
 					position: 'relative',
+					marginTop: 1,
+					marginLeft: 4,
 					'&::after': {
 						position: 'absolute',
 						right: '-15px',
@@ -98,15 +96,12 @@ export const MessageRight = ({ content, timeStamp }) => {
 						right: '-19px'
 					}
 				}}
-				elevation={24}>
+				elevation={0}>
+				<LazyLoadImage alt={url} src={url} width={250} height={200} />
+
 				<ListItemText
-					primary={<Typography variant="body2">{content}</Typography>}
 					secondary={
-						<Typography
-							variant="subtitle2"
-							color="gray"
-							textAlign="right"
-							sx={{ marginTop: 1 }}>
+						<Typography variant="subtitle2" color="gray" textAlign="right">
 							{dayjs(timeStamp).format('DD/MM/YY')}
 						</Typography>
 					}></ListItemText>
