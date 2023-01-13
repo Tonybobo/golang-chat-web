@@ -4,6 +4,7 @@ import { getMoreMessages } from '../../../../../redux/actions/chat';
 
 import { Box } from '@mui/material';
 import { SwitchComponent } from '../../../../../utils/switch';
+import { useRef, useEffect } from 'react';
 
 export default function MessageList() {
 	const { users } = useSelector((state) => state.users);
@@ -14,6 +15,12 @@ export default function MessageList() {
 
 	const handleLoadMore = () => {
 		dispatch(getMoreMessages(pages + 1));
+	};
+
+	const AlwaysScrollToBottom = () => {
+		const ref = useRef();
+		useEffect(() => ref.current.scrollIntoView(), []);
+		return <div ref={ref} />;
 	};
 
 	return (
@@ -37,6 +44,7 @@ export default function MessageList() {
 				useWindow={false}
 				loader={<h4>Loading...</h4>}>
 				{messages.map((message) => SwitchComponent(message, users.uid))}
+				<AlwaysScrollToBottom />
 			</InfiniteScroll>
 		</Box>
 	);

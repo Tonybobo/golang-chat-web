@@ -12,6 +12,7 @@ import {
 	MESSAGE_URL
 } from '../../utils/Constant';
 import axios from 'axios';
+import dayjs from 'dayjs';
 
 export const setSocket = createAction('panel/setSocket');
 
@@ -230,6 +231,22 @@ export const getMoreMessages = createAsyncThunk(
 			return message ?? [];
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response.data.Error);
+		}
+	}
+);
+
+export const appendMsg = createAsyncThunk(
+	'panel/appendMsg',
+	async (data, thunkAPI) => {
+		try {
+			const { users } = thunkAPI.getState().users;
+			delete data.fromUsername;
+			delete data.to;
+			data.from = users;
+			data.createdAt = dayjs();
+			return data;
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error);
 		}
 	}
 );

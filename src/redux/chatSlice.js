@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
 	addFriend,
+	appendMsg,
 	createGroup,
 	getFriends,
 	getGroupMembers,
@@ -113,6 +114,9 @@ const chatSlice = createSlice({
 		});
 		builder.addCase(setSocket, (state, action) => {
 			state.socket = action.payload;
+		});
+		builder.addCase(appendMsg.fulfilled, (state, action) => {
+			state.messages.push(action.payload);
 		});
 	}
 });

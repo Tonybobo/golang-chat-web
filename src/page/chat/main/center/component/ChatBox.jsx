@@ -1,13 +1,15 @@
 import { InputAdornment, OutlinedInput } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import protobuf from '../../../../../proto/proto';
+import { appendMsg } from '../../../../../redux/actions/chat';
 
 export default function ChatBox() {
 	const [msgInput, setMsgInput] = useState();
 	const { socket, selectUser } = useSelector((state) => state.chats);
 	const { users } = useSelector((state) => state.users);
+	const dispatch = useDispatch();
 
 	const EnterSendMsg = (event) => {
 		if (event.key === 'Enter' || event.type === 'click') {
@@ -24,7 +26,7 @@ export default function ChatBox() {
 			let message = protobuf.lookup('protocol.Message');
 			const messagePB = message.create(data);
 			socket.send(message.encode(messagePB).finish());
-
+			dispatch(appendMsg(data));
 			setMsgInput('');
 		}
 	};
