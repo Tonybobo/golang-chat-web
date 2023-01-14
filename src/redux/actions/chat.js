@@ -13,6 +13,8 @@ import {
 } from '../../utils/Constant';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import { v4 as uuidv4 } from 'uuid';
+import protobuf from '../../proto/proto';
 
 export const setSocket = createAction('panel/setSocket');
 
@@ -247,6 +249,66 @@ export const appendMsg = createAsyncThunk(
 			return data;
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error);
+		}
+	}
+);
+
+export const appendMediaMsg = createAsyncThunk(
+	'panel/appendMediaMsg',
+	async (data, thunkAPI) => {
+		try {
+			const { file, contentType } = data;
+			const media = file.type.split('/')[0];
+
+			const fileName = `${file.name}-${uuidv4()}`;
+			const response = await axios.post(
+				'https://go-chat.fly.dev/api/message/url',
+				{
+					method: 'PUT',
+					fileName: `${media}/${fileName}`,
+					contentType: file.type
+				}
+			);
+
+			const signedUrl = response.data.url;
+
+			const xhr = new XMLHttpRequest();
+			xhr.open('PUT', signedUrl, true);
+			xhr.onload = () => {
+				const status = xhr.status;
+				if (status === 200) console.log('file has been uploaded ');
+				else console.log('something went wrong');
+			};
+
+			xhr.onerror = () => alert('something went wrong. Please Try Again Later');
+
+			xhr.setRequestHeader('Content-Type', file.type);
+			xhr.send(file);
+
+			const { socket, selectUser } = thunkAPI.getState().chats;
+			const { users } = thunkAPI.getState().users;
+
+			let msg = {
+				content: '',
+				contentType: contentType,
+				messageType: selectUser.type,
+				fromUsername: users.username,
+				from: users.uid,
+				to: selectUser.uid,
+				url: `https://storage.googleapis.com/go-chat/${media}/${fileName}`
+			};
+
+			let message = protobuf.lookup('protocol.Message');
+			const messagePB = message.create(msg);
+			socket.send(message.encode(messagePB).finish());
+
+			delete msg.fromUsername;
+			delete msg.to;
+			data.from = users;
+			data.createdAt = dayjs();
+			return data;
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error.response.data.Error);
 		}
 	}
 );

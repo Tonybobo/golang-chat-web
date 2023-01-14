@@ -1,9 +1,11 @@
-import { InputAdornment, OutlinedInput } from '@mui/material';
+import { InputAdornment, OutlinedInput, Box } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
+
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import protobuf from '../../../../../proto/proto';
 import { appendMsg } from '../../../../../redux/actions/chat';
+import { AddImage } from './ImageMessage';
 
 export default function ChatBox() {
 	const [msgInput, setMsgInput] = useState();
@@ -32,7 +34,23 @@ export default function ChatBox() {
 	};
 
 	return (
-		<>
+		<Box
+			component="div"
+			sx={{
+				height: 120
+			}}>
+			<Box
+				component="div"
+				sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 1 }}>
+				<Box
+					sx={{
+						display: 'flex',
+						width: '20%',
+						justifyContent: 'space-between'
+					}}>
+					<AddImage />
+				</Box>
+			</Box>
 			<OutlinedInput
 				fullWidth
 				multiline
@@ -51,6 +69,6 @@ export default function ChatBox() {
 					'aria-label': 'weight'
 				}}
 			/>
-		</>
+		</Box>
 	);
 }

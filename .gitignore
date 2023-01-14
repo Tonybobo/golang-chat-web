@@ -10,6 +10,7 @@
 
 # production
 /build
+cors.json
 
 # misc
 .DS_Store

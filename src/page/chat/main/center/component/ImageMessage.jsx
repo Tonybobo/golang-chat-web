@@ -7,6 +7,10 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import ImageIcon from '@mui/icons-material/Image';
+import { useDispatch } from 'react-redux';
+import { useRef } from 'react';
+import { appendMediaMsg } from '../../../../../redux/actions/chat';
 
 export const ImageMessageLeft = ({ url, timeStamp, sender }) => {
 	return (
@@ -107,5 +111,36 @@ export const ImageMessageRight = ({ url, timeStamp, sender }) => {
 					}></ListItemText>
 			</Paper>
 		</ListItem>
+	);
+};
+
+export const AddImage = () => {
+	const dispatch = useDispatch();
+	const ref = useRef(null);
+	const handleUploadFile = async (event) => {
+		const file = event.target.files[0];
+		if (file === undefined) return;
+		const { size } = file;
+		if (size > 10e6) {
+			window.alert('Please upload a image smaller than 10 mb');
+			return;
+		}
+
+		dispatch(appendMediaMsg({ file: file, contentType: 3 }));
+	};
+
+	return (
+		<>
+			<input
+				type="file"
+				ref={ref}
+				accept="image/*"
+				hidden
+				onChange={handleUploadFile}
+			/>
+			<ImageIcon
+				onClick={() => ref.current.click()}
+				fontSize="large"></ImageIcon>
+		</>
 	);
 };
