@@ -27,3 +27,5 @@ export const GROUP_UPLOAD_AVATAR_URL = HOST + API_VERSION + '/group/upload/';
 export const GROUP_UPDATE_DETAIL = HOST + API_VERSION + '/group/edit/';
 
 export const GROUP_MEMBER = HOST + API_VERSION + '/group/user/';
+
+export const SIGNED_URL = HOST + API_VERSION + '/message/url';

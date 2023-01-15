@@ -17,25 +17,50 @@ export default function Panel() {
 		connection();
 	});
 
+	let heartCheck = {
+		timeout: 10000,
+		timeoutObj: null,
+		serverTimeoutObj: null,
+		attempts: 3,
+		start: function () {
+			let self = this;
+			let num = this.num;
+			this.timeoutObj && clearTimeout(this.timeoutObj);
+			this.serverTimeoutObj && clearTimeout(this.serverTimeoutObj);
+			this.timeoutObj = setTimeout(function () {
+				let data = {
+					type: 'heartbeat',
+					content: 'ping'
+				};
+
+				if (socket.readyState === 1) {
+					let message = protobuf.lookup('protocol.Message');
+					const messagePB = message.create(data);
+					socket.send(message.encode(messagePB).finish());
+				}
+
+				self.serverTimeoutObj = setTimeout(function () {
+					num--;
+					if (num <= 0) {
+						console.log('the ping num is more then 3, close socket!');
+						socket.close();
+					}
+				}, self.timeout);
+			}, this.timeout);
+		}
+	};
+
 	const connection = () => {
 		socket = new WebSocket(
 			'ws://' + IP_PORT + API_VERSION + '/socket.io?uid=' + uid
 		);
 		socket.onopen = async () => {
-			let data = {
-				type: 'heartbeat',
-				content: 'ping'
-			};
-			//connection state
-			if (socket.readyState === 1) {
-				let message = protobuf.lookup('protocol.Message');
-				const messageBuffer = message.create(data);
-				socket.send(message.encode(messageBuffer).finish());
-			}
-
+			heartCheck.start();
 			dispatch(setSocket(socket));
 		};
 		socket.onmessage = (message) => {
+			heartCheck.start();
+
 			let messageProto = protobuf.lookup('protocol.Message');
 			// read buffer and decode message
 			let reader = new FileReader();

@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
 	addFriend,
-	appendMediaMsg,
 	appendMsg,
 	createGroup,
 	getFriends,
@@ -118,13 +117,6 @@ const chatSlice = createSlice({
 		});
 		builder.addCase(appendMsg.fulfilled, (state, action) => {
 			state.messages.push(action.payload);
-		});
-
-		builder.addCase(appendMediaMsg.fulfilled, (state, action) => {
-			state.messages.push(action.payload);
-		});
-		builder.addCase(appendMediaMsg.rejected, (state, action) => {
-			state.error = action.payload;
 		});
 	}
 });

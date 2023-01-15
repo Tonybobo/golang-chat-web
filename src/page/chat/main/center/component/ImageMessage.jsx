@@ -8,9 +8,11 @@ import {
 import dayjs from 'dayjs';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import ImageIcon from '@mui/icons-material/Image';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRef } from 'react';
-import { appendMediaMsg } from '../../../../../redux/actions/chat';
+import protobuf from '../../../../../proto/proto';
+import { getSignedUrl } from '../../../../../utils/upload';
+import { appendMsg } from '../../../../../redux/actions/chat';
 
 export const ImageMessageLeft = ({ url, timeStamp, sender }) => {
 	return (
@@ -116,6 +118,8 @@ export const ImageMessageRight = ({ url, timeStamp, sender }) => {
 
 export const AddImage = () => {
 	const dispatch = useDispatch();
+	const { selectUser, socket } = useSelector((state) => state.chats);
+	const { users } = useSelector((state) => state.users);
 	const ref = useRef(null);
 	const handleUploadFile = async (event) => {
 		const file = event.target.files[0];
@@ -126,7 +130,23 @@ export const AddImage = () => {
 			return;
 		}
 
-		dispatch(appendMediaMsg({ file: file, contentType: 3 }));
+		const fileName = await getSignedUrl(file);
+
+		let msg = {
+			content: '',
+			contentType: 3,
+			messageType: selectUser.type,
+			fromUsername: users.username,
+			from: users.uid,
+			to: selectUser.uid,
+			url: `https://storage.googleapis.com/go-chat/${fileName}`
+		};
+
+		let message = protobuf.lookup('protocol.Message');
+		const messagePB = message.create(msg);
+		socket.send(message.encode(messagePB).finish());
+
+		dispatch(appendMsg(msg));
 	};
 
 	return (
