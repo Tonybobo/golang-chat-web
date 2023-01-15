@@ -3,10 +3,19 @@ import {
 	Typography,
 	Avatar,
 	ListItem,
-	Paper
+	Paper,
+	Tooltip,
+	IconButton
 } from '@mui/material';
 import dayjs from 'dayjs';
 import ReactPlayer from 'react-player/lazy';
+
+import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRef } from 'react';
+import protobuf from '../../../../../proto/proto';
+import { getSignedUrl } from '../../../../../utils/upload';
+import { appendMsg } from '../../../../../redux/actions/chat';
 
 export const VideoMessageLeft = ({ url, timeStamp, sender }) => {
 	return (
@@ -147,5 +156,56 @@ export const VideoMessageRight = ({ url, timeStamp }) => {
 					}></ListItemText>
 			</Paper>
 		</ListItem>
+	);
+};
+
+export const AddVideo = () => {
+	const dispatch = useDispatch();
+	const { selectUser, socket } = useSelector((state) => state.chats);
+	const { users } = useSelector((state) => state.users);
+	const ref = useRef(null);
+	const handleUploadFile = async (event) => {
+		const file = event.target.files[0];
+		if (file === undefined) return;
+		const { size } = file;
+		if (size > 10e6) {
+			window.alert('Please upload a image smaller than 10 mb');
+			return;
+		}
+
+		const fileName = await getSignedUrl(file);
+
+		let msg = {
+			content: '',
+			contentType: 5,
+			messageType: selectUser.type,
+			fromUsername: users.username,
+			from: users.uid,
+			to: selectUser.uid,
+			url: `https://storage.googleapis.com/go-chat/${fileName}`
+		};
+
+		let message = protobuf.lookup('protocol.Message');
+		const messagePB = message.create(msg);
+		socket.send(message.encode(messagePB).finish());
+
+		dispatch(appendMsg(msg));
+	};
+
+	return (
+		<>
+			<input
+				type="file"
+				ref={ref}
+				accept="video/*"
+				hidden
+				onChange={handleUploadFile}
+			/>
+			<Tooltip title="Add Video">
+				<IconButton onClick={() => ref.current.click()}>
+					<VideoLibraryIcon fontSize="large"></VideoLibraryIcon>
+				</IconButton>
+			</Tooltip>
+		</>
 	);
 };

@@ -4,10 +4,20 @@ import {
 	ListItem,
 	Paper,
 	Avatar,
-	Button
+	Button,
+	Tooltip,
+	IconButton
 } from '@mui/material';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import protobuf from '../../../../../proto/proto';
+
+import FilePresentIcon from '@mui/icons-material/FilePresent';
+
 import dayjs from 'dayjs';
+import { getSignedUrl } from '../../../../../utils/upload';
+import { appendMsg } from '../../../../../redux/actions/chat';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRef } from 'react';
 
 export const FileMessageLeft = ({ url, timeStamp, sender }) => {
 	const decode = decodeURI(url);
@@ -143,5 +153,57 @@ export const FileMessageRight = ({ url, timeStamp }) => {
 					}></ListItemText>
 			</Paper>
 		</ListItem>
+	);
+};
+
+export const AddFile = () => {
+	const dispatch = useDispatch();
+	const { selectUser, socket } = useSelector((state) => state.chats);
+	const { users } = useSelector((state) => state.users);
+	const ref = useRef(null);
+	const handleUploadFile = async (event) => {
+		const file = event.target.files[0];
+		if (file === undefined) return;
+		const { size } = file;
+		if (size > 10e6) {
+			window.alert('Please upload a image smaller than 10 mb');
+			return;
+		}
+
+		const fileName = await getSignedUrl(file);
+
+		let msg = {
+			content: '',
+			contentType: 2,
+			messageType: selectUser.type,
+			fromUsername: users.username,
+			from: users.uid,
+			to: selectUser.uid,
+			url: `https://storage.googleapis.com/go-chat/${fileName}`
+		};
+
+		let message = protobuf.lookup('protocol.Message');
+		const messagePB = message.create(msg);
+		socket.send(message.encode(messagePB).finish());
+
+		dispatch(appendMsg(msg));
+	};
+
+	return (
+		<>
+			<input
+				type="file"
+				ref={ref}
+				accept="application/pdf,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+				hidden
+				onChange={handleUploadFile}
+			/>
+
+			<Tooltip title="Add files">
+				<IconButton onClick={() => ref.current.click()}>
+					<FilePresentIcon fontSize="large" />
+				</IconButton>
+			</Tooltip>
+		</>
 	);
 };

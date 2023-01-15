@@ -3,7 +3,9 @@ import {
 	Typography,
 	ListItem,
 	Paper,
-	Avatar
+	Avatar,
+	Tooltip,
+	IconButton
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
@@ -158,9 +160,11 @@ export const AddImage = () => {
 				hidden
 				onChange={handleUploadFile}
 			/>
-			<ImageIcon
-				onClick={() => ref.current.click()}
-				fontSize="large"></ImageIcon>
+			<Tooltip title="Add Image">
+				<IconButton onClick={() => ref.current.click()}>
+					<ImageIcon fontSize="large" />
+				</IconButton>
+			</Tooltip>
 		</>
 	);
 };

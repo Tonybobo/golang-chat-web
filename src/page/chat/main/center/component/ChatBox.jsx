@@ -6,6 +6,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import protobuf from '../../../../../proto/proto';
 import { appendMsg } from '../../../../../redux/actions/chat';
 import { AddImage } from './ImageMessage';
+import { AddVideo } from './VideoMessage';
+import { AddFile } from './FileMessage';
+import { AddAudio } from './AudioMessage';
 
 export default function ChatBox() {
 	const [msgInput, setMsgInput] = useState();
@@ -45,10 +48,13 @@ export default function ChatBox() {
 				<Box
 					sx={{
 						display: 'flex',
-						width: '20%',
+						width: '50%',
 						justifyContent: 'space-between'
 					}}>
 					<AddImage />
+					<AddVideo />
+					<AddFile />
+					<AddAudio />
 				</Box>
 			</Box>
 			<OutlinedInput

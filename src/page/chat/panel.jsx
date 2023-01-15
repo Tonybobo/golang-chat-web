@@ -71,7 +71,9 @@ export default function Panel() {
 					new Uint8Array(event.target.result)
 				);
 
-				if (messageBuffer.type === 'heartbeat') return;
+				if (messageBuffer.type === 'heartbeat') {
+					return;
+				}
 			});
 		};
 	};
