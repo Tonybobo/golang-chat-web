@@ -49,6 +49,7 @@ export const getFriends = createAsyncThunk(
 		try {
 			const { users } = thunkAPI.getState().users;
 			const { data } = await axios.get(USER_URL + `friends?uid=${users.uid}`);
+
 			const friends = data.data
 				? data.data.map((element) => {
 						element.type = 1;
@@ -57,7 +58,8 @@ export const getFriends = createAsyncThunk(
 				: [];
 
 			const response = await axios.get(GROUP_LIST_URL + `${users.uid}`);
-			const groups = response.data.data[0]?.group
+
+			const groups = response.data.data
 				? response.data.data[0]?.group.map((element) => {
 						element.type = 2;
 						return element;
@@ -245,6 +247,28 @@ export const appendMsg = createAsyncThunk(
 			data.from = users;
 			data.createdAt = dayjs();
 			return data;
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error);
+		}
+	}
+);
+
+export const appendFriendMsg = createAsyncThunk(
+	'panel/appendFriendMsg',
+	async (data, thunkAPI) => {
+		try {
+			console.log(data);
+			let msg = {
+				content: data.content,
+				contentType: data.contentType,
+				createdAt: dayjs(),
+				from: {
+					uid: data.from,
+					username: data.fromUsername
+				},
+				url: data.url
+			};
+			return msg;
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error);
 		}

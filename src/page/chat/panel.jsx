@@ -6,16 +6,30 @@ import MiniDrawer from './main/center';
 import { Container } from '@mui/system';
 import TransitionMsg from './main/right/alert';
 import { useDispatch } from 'react-redux';
-import { setSocket } from '../../redux/actions/chat';
+import { setSocket, appendFriendMsg } from '../../redux/actions/chat';
 
 export default function Panel() {
 	let socket;
+	let lockConnection = false,
+		reconnectObj = {};
 	const { uid } = useParams();
 
 	const dispatch = useDispatch();
 	useEffect(() => {
 		connection();
 	});
+
+	const reconnect = () => {
+		if (lockConnection) return;
+		lockConnection = true;
+
+		reconnectObj && clearTimeout(reconnectObj);
+
+		reconnectObj = setTimeout(() => {
+			if (socket.readyState !== 1) connection();
+			lockConnection = false;
+		}, 10000);
+	};
 
 	let heartCheck = {
 		timeout: 10000,
@@ -54,7 +68,7 @@ export default function Panel() {
 		socket = new WebSocket(
 			'ws://' + IP_PORT + API_VERSION + '/socket.io?uid=' + uid
 		);
-		socket.onopen = async () => {
+		socket.onopen = () => {
 			heartCheck.start();
 			dispatch(setSocket(socket));
 		};
@@ -74,7 +88,18 @@ export default function Panel() {
 				if (messageBuffer.type === 'heartbeat') {
 					return;
 				}
+
+				dispatch(appendFriendMsg(messageBuffer));
 			});
+		};
+
+		socket.onclose = (_message) => {
+			console.log('socket closed. will reconnect');
+			reconnect();
+		};
+		socket.onerror = (_message) => {
+			console.log('socket error. reconnecting');
+			reconnect();
 		};
 	};
 	return (
