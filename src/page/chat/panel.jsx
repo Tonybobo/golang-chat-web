@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { IP_PORT, API_VERSION } from '../../utils/Constant';
+import { IP_PORT, API_VERSION, MESSAGE_TRANS_TYPE } from '../../utils/Constant';
 import protobuf from '../../proto/proto';
 import { useParams } from 'react-router-dom';
 import MiniDrawer from './main/center';
@@ -17,7 +17,17 @@ export default function Panel() {
 	const dispatch = useDispatch();
 	useEffect(() => {
 		connection();
+		checkPermission();
 	});
+
+	const checkPermission = () => {
+		navigator.getUserMedia =
+			navigator.getUserMedia ||
+			navigator.webkitGetUserMedia ||
+			navigator.mozGetUserMedia ||
+			navigator.msGetUserMedia;
+		return;
+	};
 
 	const reconnect = () => {
 		if (lockConnection) return;
@@ -84,6 +94,10 @@ export default function Panel() {
 					//Array buffer need to be 8bit unsigned integer
 					new Uint8Array(event.target.result)
 				);
+				if (messageBuffer.type === MESSAGE_TRANS_TYPE) {
+					console.log('webrtc');
+					return;
+				}
 
 				if (messageBuffer.type === 'heartbeat') {
 					return;

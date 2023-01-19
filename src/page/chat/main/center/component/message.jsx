@@ -33,7 +33,7 @@ export const MessageLeft = ({ content, timeStamp, sender }) => {
 					</Typography>
 					<ListItemText
 						primary={
-							<Typography textAlign="center" variant="body2">
+							<Typography textAlign="left" variant="body2">
 								{content}
 							</Typography>
 						}

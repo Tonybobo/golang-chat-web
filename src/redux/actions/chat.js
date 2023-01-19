@@ -117,12 +117,16 @@ export const addFriend = createAsyncThunk(
 					friend_uid: friendId
 				};
 				const response = await axios.post(ADD_FRIEND_URL, body);
-				return response.data.data;
+				const { data } = response.data;
+				data.type = 1;
+				return data;
 			} else {
 				const response = await axios.post(
 					GROUP_JOIN_URL + users.uid + '/' + friendId
 				);
-				return response.data.data;
+				const { data } = response.data;
+				data.type = 2;
+				return data;
 			}
 		} catch (err) {
 			return thunkAPI.rejectWithValue(err.response.data.Error);
@@ -257,7 +261,6 @@ export const appendFriendMsg = createAsyncThunk(
 	'panel/appendFriendMsg',
 	async (data, thunkAPI) => {
 		try {
-			console.log(data);
 			let msg = {
 				content: data.content,
 				contentType: data.contentType,

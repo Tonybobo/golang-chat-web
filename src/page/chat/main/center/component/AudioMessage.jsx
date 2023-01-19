@@ -11,7 +11,7 @@ import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import ReactAudioPlayer from 'react-audio-player';
 import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
-import { useState, useEffect } from 'react';
+
 import { getSignedUrl } from '../../../../../utils/upload';
 import { appendMsg } from '../../../../../redux/actions/chat';
 import protobuf from '../../../../../proto/proto';
@@ -152,27 +152,10 @@ export const AddAudio = () => {
 	const dispatch = useDispatch();
 	let recorder;
 	let chunks = [];
-	const [permission, setPermission] = useState(true);
 	const { selectUser, socket } = useSelector((state) => state.chats);
 	const { users } = useSelector((state) => state.users);
-	useEffect(() => {
-		checkPermission();
-	});
-	const checkPermission = async () => {
-		navigator.getUserMedia =
-			navigator.getUserMedia ||
-			navigator.webkitGetUserMedia ||
-			navigator.mozGetUserMedia ||
-			navigator.msGetUserMedia; //获取媒体对象（这里指摄像头）
-		if (!navigator || !navigator.mediaDevices) {
-			setPermission(false);
-			return false;
-		}
-		return true;
-	};
 
 	if (navigator.mediaDevices) {
-		console.log('permission granted');
 		navigator.mediaDevices
 			.getUserMedia({ audio: true })
 			.then((stream) => {
@@ -213,7 +196,7 @@ export const AddAudio = () => {
 	}
 
 	const handleStart = () => {
-		if (permission) recorder.start();
+		if (navigator.getUserMedia) recorder.start();
 		else alert('Permission has not been granted');
 	};
 	const handleStop = () => {

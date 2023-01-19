@@ -9,6 +9,7 @@ import { AddImage } from './ImageMessage';
 import { AddVideo } from './VideoMessage';
 import { AddFile } from './FileMessage';
 import { AddAudio } from './AudioMessage';
+import { AudioOnline } from './AudioOnline';
 
 export default function ChatBox() {
 	const [msgInput, setMsgInput] = useState();
@@ -55,6 +56,7 @@ export default function ChatBox() {
 					<AddVideo />
 					<AddFile />
 					<AddAudio />
+					<AudioOnline />
 				</Box>
 			</Box>
 			<OutlinedInput
