@@ -8,8 +8,7 @@ import {
 	Button
 } from '@mui/material';
 import CallIcon from '@mui/icons-material/Call';
-import { useSelector } from 'react-redux';
-import protobuf from '../../../../../proto/proto';
+import { useSelector, useDispatch } from 'react-redux';
 import {
 	AUDIO_ONLINE,
 	MESSAGE_TRANS_TYPE
@@ -17,6 +16,7 @@ import {
 
 import Draggable from 'react-draggable';
 import { useState } from 'react';
+import { webrtcMsg } from '../../../../../redux/actions/chat';
 
 function PaperComponent(props) {
 	return (
@@ -30,15 +30,20 @@ function PaperComponent(props) {
 
 export const AudioOnline = () => {
 	let localPeer = new RTCPeerConnection();
-	const { socket, selectUser } = useSelector((state) => state.chats);
+	const { selectUser } = useSelector((state) => state.chats);
 	const { users } = useSelector((state) => state.users);
 	const [open, setOpen] = useState(false);
-
-	const handleClickOpen = () => {
-		setOpen(true);
-	};
+	const dispatch = useDispatch();
 
 	const handleClose = () => {
+		let audioPhone = document.getElementById('remoteAudioPhone');
+		if (
+			audioPhone &&
+			audioPhone.srcObject &&
+			audioPhone.srcObject.getTracks()
+		) {
+			audioPhone.srcObject.getTracks().forEach((track) => track.stop());
+		}
 		setOpen(false);
 	};
 
@@ -66,10 +71,8 @@ export const AudioOnline = () => {
 						to: selectUser.uid
 					};
 
-					let message = protobuf.lookup('protocol.Message');
-					const messagePB = message.create(data);
-					socket.send(message.encode(messagePB).finish());
-					handleClickOpen();
+					dispatch(webrtcMsg(data));
+					setOpen(true);
 				});
 			});
 	};
@@ -88,9 +91,7 @@ export const AudioOnline = () => {
 					from: users.uid,
 					to: selectUser.uid
 				};
-				let message = protobuf.lookup('protocol.Message');
-				const messagePB = message.create(data);
-				socket.send(message.encode(messagePB).finish());
+				dispatch(webrtcMsg(data));
 			}
 		};
 
@@ -111,7 +112,6 @@ export const AudioOnline = () => {
 			<Dialog
 				hideBackdrop
 				disableEnforceFocus
-				disableBackdropClick
 				style={{ position: 'initial' }}
 				open={open}
 				onClose={handleClose}
@@ -120,12 +120,11 @@ export const AudioOnline = () => {
 				<DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
 					Subscribe
 				</DialogTitle>
-
+				<audio id="remoteAudioPhone" autoPlay controls />
 				<DialogActions>
 					<Button autoFocus onClick={handleClose}>
 						Cancel
 					</Button>
-					<Button onClick={handleClose}>Subscribe</Button>
 				</DialogActions>
 			</Dialog>
 		</>

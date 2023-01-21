@@ -10,7 +10,6 @@ import {
 	searchUsersAndGroups,
 	selectFirstFriends,
 	selectFriend,
-	setSocket,
 	updateGroupDetail,
 	uploadGroupAvatar
 } from './actions/chat';
@@ -18,7 +17,6 @@ import {
 const initialState = {
 	open: false,
 	friends: {},
-	socket: null,
 	error: '',
 	search: [],
 	selectUser: {},
@@ -113,9 +111,7 @@ const chatSlice = createSlice({
 			state.messages = [...action.payload, ...message];
 			state.pages++;
 		});
-		builder.addCase(setSocket, (state, action) => {
-			state.socket = action.payload;
-		});
+
 		builder.addCase(appendMsg.fulfilled, (state, action) => {
 			state.messages.push(action.payload);
 		});

@@ -9,13 +9,12 @@ import {
 	Box
 } from '@mui/material';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import protobuf from '../../../../../proto/proto';
 
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 
 import dayjs from 'dayjs';
 import { getSignedUrl } from '../../../../../utils/upload';
-import { appendMsg } from '../../../../../redux/actions/chat';
+import { sendMsg } from '../../../../../redux/actions/chat';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRef } from 'react';
 
@@ -155,7 +154,7 @@ export const FileMessageRight = ({ url, timeStamp }) => {
 
 export const AddFile = () => {
 	const dispatch = useDispatch();
-	const { selectUser, socket } = useSelector((state) => state.chats);
+	const { selectUser } = useSelector((state) => state.chats);
 	const { users } = useSelector((state) => state.users);
 	const ref = useRef(null);
 	const handleUploadFile = async (event) => {
@@ -179,11 +178,7 @@ export const AddFile = () => {
 			url: `https://storage.googleapis.com/go-chat/${fileName}`
 		};
 
-		let message = protobuf.lookup('protocol.Message');
-		const messagePB = message.create(msg);
-		socket.send(message.encode(messagePB).finish());
-
-		dispatch(appendMsg(msg));
+		dispatch(sendMsg(msg));
 	};
 
 	return (

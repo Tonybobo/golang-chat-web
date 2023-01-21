@@ -3,8 +3,7 @@ import SendIcon from '@mui/icons-material/Send';
 
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import protobuf from '../../../../../proto/proto';
-import { appendMsg } from '../../../../../redux/actions/chat';
+import { sendMsg } from '../../../../../redux/actions/chat';
 import { AddImage } from './ImageMessage';
 import { AddVideo } from './VideoMessage';
 import { AddFile } from './FileMessage';
@@ -13,7 +12,7 @@ import { AudioOnline } from './AudioOnline';
 
 export default function ChatBox() {
 	const [msgInput, setMsgInput] = useState();
-	const { socket, selectUser } = useSelector((state) => state.chats);
+	const { selectUser } = useSelector((state) => state.chats);
 	const { users } = useSelector((state) => state.users);
 	const dispatch = useDispatch();
 
@@ -28,11 +27,7 @@ export default function ChatBox() {
 				from: users.uid,
 				to: selectUser.uid
 			};
-
-			let message = protobuf.lookup('protocol.Message');
-			const messagePB = message.create(data);
-			socket.send(message.encode(messagePB).finish());
-			dispatch(appendMsg(data));
+			dispatch(sendMsg(data));
 			setMsgInput('');
 		}
 	};

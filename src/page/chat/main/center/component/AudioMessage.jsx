@@ -13,8 +13,7 @@ import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getSignedUrl } from '../../../../../utils/upload';
-import { appendMsg } from '../../../../../redux/actions/chat';
-import protobuf from '../../../../../proto/proto';
+import { sendMsg } from '../../../../../redux/actions/chat';
 
 export const AudioMessageRight = ({ url, timeStamp }) => {
 	return (
@@ -152,7 +151,7 @@ export const AddAudio = () => {
 	const dispatch = useDispatch();
 	let recorder;
 	let chunks = [];
-	const { selectUser, socket } = useSelector((state) => state.chats);
+	const { selectUser } = useSelector((state) => state.chats);
 	const { users } = useSelector((state) => state.users);
 
 	if (navigator.mediaDevices) {
@@ -168,7 +167,7 @@ export const AddAudio = () => {
 					const reader = new FileReader();
 					reader.readAsDataURL(audioBlob);
 					reader.onloadend = async () => {
-						audioBlob.name = 'testing';
+						audioBlob.name = 'audio';
 						chunks = [];
 						const fileName = await getSignedUrl(audioBlob);
 
@@ -182,11 +181,7 @@ export const AddAudio = () => {
 							url: `https://storage.googleapis.com/go-chat/${fileName}`
 						};
 
-						let message = protobuf.lookup('protocol.Message');
-						const messagePB = message.create(msg);
-						socket.send(message.encode(messagePB).finish());
-
-						dispatch(appendMsg(msg));
+						dispatch(sendMsg(msg));
 					};
 				};
 			})
