@@ -13,6 +13,7 @@ import {
 	updateGroupDetail,
 	uploadGroupAvatar
 } from './actions/chat';
+import { receiveAudioCall, receiveVideoCall } from './middleware/webrtc';
 
 const initialState = {
 	open: false,
@@ -23,7 +24,10 @@ const initialState = {
 	loading: false,
 	messages: [],
 	pages: 1,
-	totalPages: 0
+	totalPages: 0,
+	receiveAudioCall: false,
+	receiveVideoCall: false,
+	caller: {}
 };
 
 const chatSlice = createSlice({
@@ -117,6 +121,14 @@ const chatSlice = createSlice({
 		});
 		builder.addCase(appendFriendMsg.fulfilled, (state, action) => {
 			state.messages.push(action.payload);
+		});
+		builder.addCase(receiveAudioCall, (state, action) => {
+			state.receiveAudioCall = true;
+			state.caller = action.payload;
+		});
+		builder.addCase(receiveVideoCall, (state, action) => {
+			state.receiveAudioCall = true;
+			state.caller = action.payload;
 		});
 	}
 });

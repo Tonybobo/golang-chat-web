@@ -1,28 +1,25 @@
-import { IP_PORT, API_VERSION, MESSAGE_TRANS_TYPE } from '../../utils/Constant';
+import {
+	IP_PORT,
+	API_VERSION,
+	MESSAGE_TRANS_TYPE,
+	AUDIO_ONLINE,
+	VIDEO_ONLINE
+} from '../../utils/Constant';
 
 import protobuf from '../../proto/proto';
 import { appendFriendMsg, appendMsg } from '../actions/chat';
+import Peer from 'simple-peer';
+import { receiveAudioCall } from './webrtc';
 
-// const reconnect = () => {
-// 	if (lockConnection) return;
-// 	lockConnection = true;
+let peer;
 
-// 	reconnectObj && clearTimeout(reconnectObj);
-
-// 	reconnectObj = setTimeout(() => {
-// 		if (socket.readyState !== 1) connection();
-// 		lockConnection = false;
-// 	}, 10000);
-// };
+let socket = null;
 
 const socketMiddleware = () => {
-	let socket = null;
-
 	const connection = (store, uid) => {
 		socket = new WebSocket(
 			'ws://' + IP_PORT + API_VERSION + '/socket.io?uid=' + uid
 		);
-
 		// // websocket handlers
 		socket.onmessage = onMessage(store);
 		socket.onclose = onClose(store);
@@ -53,7 +50,31 @@ const socketMiddleware = () => {
 				new Uint8Array(event.target.result)
 			);
 			if (messageBuffer.type === MESSAGE_TRANS_TYPE) {
-				console.log('webrtc');
+				const content = JSON.parse(messageBuffer.content);
+				console.log(content);
+				switch (content.type) {
+					case 'offer':
+						if (messageBuffer.contentType === AUDIO_ONLINE) {
+							let caller = {
+								fromUsername: messageBuffer.fromUsername,
+								from: messageBuffer.from,
+								content: messageBuffer.content
+							};
+							store.dispatch(receiveAudioCall(caller));
+						}
+						if (messageBuffer.contentType === VIDEO_ONLINE) {
+							let caller = {
+								fromUsername: messageBuffer.fromUsername,
+								from: messageBuffer.from,
+								content: messageBuffer.content
+							};
+							store.dispatch(receiveAudioCall(caller));
+						}
+
+						break;
+					default:
+						break;
+				}
 				return;
 			}
 
@@ -78,10 +99,36 @@ const socketMiddleware = () => {
 				store.dispatch(appendMsg(action.payload));
 				break;
 
-			case 'panel/webrtc':
-				let buffer = message.create(action.payload);
-				socket.send(message.encode(buffer).finish());
+			case 'panel/audioCall':
+				const { users } = store.getState().users;
+				const { selectUser } = store.getState().chats;
+				navigator.mediaDevices
+					.getUserMedia({
+						audio: true
+					})
+					.then((stream) => {
+						peer = new Peer({
+							initiator: true,
+							trickle: false,
+							stream: stream
+						});
+
+						peer.on('signal', (data) => {
+							let request = {
+								contentType: AUDIO_ONLINE,
+								fromUsername: users.username,
+								from: users.uid,
+								to: selectUser.uid,
+								type: MESSAGE_TRANS_TYPE,
+								content: JSON.stringify(data)
+							};
+							let buffer = message.create(request);
+							socket.send(message.encode(buffer).finish());
+						});
+					});
+				next(action);
 				break;
+
 			default:
 				return next(action);
 		}

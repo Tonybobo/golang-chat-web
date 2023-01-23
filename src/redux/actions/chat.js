@@ -15,7 +15,6 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 
 export const sendMsg = createAction('panel/sendMsg');
-export const webrtcMsg = createAction('panel/webrtc');
 
 export const selectFirstFriends = createAsyncThunk(
 	'panel/selectFirstFriends',
