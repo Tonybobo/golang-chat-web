@@ -9,7 +9,7 @@ import {
 import protobuf from '../../proto/proto';
 import { appendFriendMsg, appendMsg } from '../actions/chat';
 import Peer from 'simple-peer';
-import { receiveAudioCall } from './webrtc';
+import { calling, receiveAudioCall, setCallAccepted } from './webrtc';
 
 let peer;
 
@@ -51,7 +51,8 @@ const socketMiddleware = () => {
 			);
 			if (messageBuffer.type === MESSAGE_TRANS_TYPE) {
 				const content = JSON.parse(messageBuffer.content);
-				console.log(content);
+				console.log(messageBuffer);
+
 				switch (content.type) {
 					case 'offer':
 						if (messageBuffer.contentType === AUDIO_ONLINE) {
@@ -70,7 +71,10 @@ const socketMiddleware = () => {
 							};
 							store.dispatch(receiveAudioCall(caller));
 						}
-
+						break;
+					case 'answer':
+						store.dispatch(setCallAccepted());
+						peer.signal(content);
 						break;
 					default:
 						break;
@@ -84,6 +88,8 @@ const socketMiddleware = () => {
 	};
 	let message = protobuf.lookup('protocol.Message');
 	return (store) => (next) => (action) => {
+		const { users } = store.getState().users;
+		const { selectUser, caller } = store.getState().chats;
 		switch (action.type) {
 			case 'users/login/fulfilled':
 				if (socket !== null) {
@@ -100,8 +106,7 @@ const socketMiddleware = () => {
 				break;
 
 			case 'panel/audioCall':
-				const { users } = store.getState().users;
-				const { selectUser } = store.getState().chats;
+				store.dispatch(calling());
 				navigator.mediaDevices
 					.getUserMedia({
 						audio: true
@@ -125,8 +130,48 @@ const socketMiddleware = () => {
 							let buffer = message.create(request);
 							socket.send(message.encode(buffer).finish());
 						});
+
+						peer.on('stream', (remoteStream) => {
+							console.log(remoteStream);
+							// get document by id
+							//set video srcObject = remoteStream
+						});
 					});
-				next(action);
+				break;
+
+			case 'panel/answerAudioCall':
+				//set call accepted == true
+				store.dispatch(setCallAccepted());
+				const { content } = caller;
+				let signal = JSON.parse(content);
+				navigator.mediaDevices
+					.getUserMedia({
+						audio: true,
+						video: false
+					})
+					.then((stream) => {
+						peer = new Peer({ initiator: false, trickle: false, stream });
+
+						peer.on('signal', (data) => {
+							console.log(data);
+							let response = {
+								contentType: AUDIO_ONLINE,
+								fromUsername: users.username,
+								from: users.uid,
+								to: selectUser.uid,
+								type: MESSAGE_TRANS_TYPE,
+								content: JSON.stringify(data)
+							};
+							let buffer = message.create(response);
+							socket.send(message.encode(buffer).finish());
+						});
+						peer.on('stream', (remoteStream) => {
+							console.log(remoteStream);
+							//get document by id
+							//set video srcObject to remoteStream
+						});
+						peer.signal(signal);
+					});
 				break;
 
 			default:

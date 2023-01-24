@@ -13,7 +13,15 @@ import {
 	updateGroupDetail,
 	uploadGroupAvatar
 } from './actions/chat';
-import { receiveAudioCall, receiveVideoCall } from './middleware/webrtc';
+import {
+	receiveAudioCall,
+	receiveVideoCall,
+	setCallAccepted,
+	rejectAudioCall,
+	rejectVideoCall,
+	calling,
+	leaveCall
+} from './middleware/webrtc';
 
 const initialState = {
 	open: false,
@@ -27,7 +35,9 @@ const initialState = {
 	totalPages: 0,
 	receiveAudioCall: false,
 	receiveVideoCall: false,
-	caller: {}
+	callAccepted: false,
+	caller: {},
+	calling: false
 };
 
 const chatSlice = createSlice({
@@ -126,9 +136,29 @@ const chatSlice = createSlice({
 			state.receiveAudioCall = true;
 			state.caller = action.payload;
 		});
+		builder.addCase(rejectAudioCall, (state, action) => {
+			state.receiveAudioCall = false;
+			state.caller = {};
+		});
 		builder.addCase(receiveVideoCall, (state, action) => {
 			state.receiveAudioCall = true;
 			state.caller = action.payload;
+		});
+		builder.addCase(rejectVideoCall, (state, action) => {
+			state.receiveAudioCall = false;
+			state.caller = {};
+		});
+		builder.addCase(calling, (state, action) => {
+			state.calling = true;
+		});
+		builder.addCase(setCallAccepted, (state, action) => {
+			state.receiveAudioCall = false;
+			state.receiveVideoCall = false;
+			state.callAccepted = true;
+		});
+		builder.addCase(leaveCall, (state, action) => {
+			state.callAccepted = false;
+			state.calling = false;
 		});
 	}
 });
