@@ -9,7 +9,8 @@ import {
 	DialogContent,
 	IconButton,
 	Paper,
-	Snackbar
+	Snackbar,
+	DialogTitle
 } from '@mui/material';
 
 import CallIcon from '@mui/icons-material/Call';
@@ -41,9 +42,16 @@ export default function Panel() {
 
 	function PaperComponent(props) {
 		return (
-			<Draggable defaultPosition={{ x: 50, y: 50 }} grid={[25, 25]}>
+			<Draggable
+				handle="#remoteVideo"
+				cancel={'[class*="MuiDialogContent-root"]'}
+				defaultPosition={{ x: 50, y: -100 }}
+				position={null}
+				grid={[25, 25]}>
 				<Paper
 					style={{
+						position: 'absolute',
+						top: '50%',
 						margin: 0,
 						backgroundColor: '#000',
 
@@ -63,7 +71,6 @@ export default function Panel() {
 				<Snackbar
 					open={receiveAudioCall}
 					autoHideDuration={10000}
-					onClose={() => dispatch(rejectAudioCall())}
 					anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
 					message={`${caller.fromUsername} request for audio call`}
 					action={
@@ -104,18 +111,30 @@ export default function Panel() {
 					hideBackdrop
 					disableEnforceFocus
 					style={{
-						position: 'absolute'
+						position: 'initial'
 					}}
 					open={calling || callAccepted}
 					PaperComponent={PaperComponent}
 					aria-labelledby="draggable-dialog-title"
 					disableBackdropClick>
+					<DialogTitle
+						style={{ cursor: 'move', textAlign: 'center' }}
+						id="draggable-dialog-title">
+						{caller.fromUsername}
+					</DialogTitle>
 					<DialogContent>
 						<video id="remoteVideo" style={{ width: 200, height: 200 }} />
 					</DialogContent>
 					<DialogActions
-						style={{ position: 'absolute', bottom: '10%', left: '37%' }}>
-						<IconButton color="inherit" onClick={() => dispatch(leaveCall())}>
+						sx={{
+							position: 'absolute',
+							bottom: '10%',
+							left: '40%'
+						}}>
+						<IconButton
+							color="inherit"
+							sx={{ p: 0.5, marginLeft: 0.5 }}
+							onClick={() => dispatch(leaveCall())}>
 							<CallEndIcon fontSize="large" />
 						</IconButton>
 					</DialogActions>

@@ -155,6 +155,7 @@ const chatSlice = createSlice({
 			state.receiveAudioCall = false;
 			state.receiveVideoCall = false;
 			state.callAccepted = true;
+			if (action.payload) state.caller = action.payload;
 		});
 		builder.addCase(leaveCall, (state, action) => {
 			state.callAccepted = false;

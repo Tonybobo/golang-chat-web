@@ -73,7 +73,12 @@ const socketMiddleware = () => {
 						}
 						break;
 					case 'answer':
-						store.dispatch(setCallAccepted());
+						let caller = {
+							fromUsername: messageBuffer.fromUsername,
+							from: messageBuffer.from,
+							content: messageBuffer.content
+						};
+						store.dispatch(setCallAccepted(caller));
 						peer.signal(content);
 						break;
 					default:
@@ -132,9 +137,9 @@ const socketMiddleware = () => {
 						});
 
 						peer.on('stream', (remoteStream) => {
-							console.log(remoteStream);
-							// get document by id
-							//set video srcObject = remoteStream
+							let video = document.getElementById('remoteVideo');
+							video.srcObject = remoteStream;
+							video.play();
 						});
 					});
 				break;
@@ -153,7 +158,6 @@ const socketMiddleware = () => {
 						peer = new Peer({ initiator: false, trickle: false, stream });
 
 						peer.on('signal', (data) => {
-							console.log(data);
 							let response = {
 								contentType: AUDIO_ONLINE,
 								fromUsername: users.username,
@@ -166,14 +170,24 @@ const socketMiddleware = () => {
 							socket.send(message.encode(buffer).finish());
 						});
 						peer.on('stream', (remoteStream) => {
-							console.log(remoteStream);
-							//get document by id
-							//set video srcObject to remoteStream
+							let video = document.getElementById('remoteVideo');
+							video.srcObject = remoteStream;
+							video.play();
 						});
 						peer.signal(signal);
 					});
 				break;
-
+			case 'panel/leaveCall':
+				let video = document.getElementById('remoteVideo');
+				video.srcObject.getVideoTracks().forEach((track) => {
+					track.stop();
+					video.srcObject.removeTrack(track);
+				});
+				console.log(video);
+				console.log('destroy peer connection');
+				peer.destroy();
+				next(action);
+				break;
 			default:
 				return next(action);
 		}
