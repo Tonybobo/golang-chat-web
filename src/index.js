@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import * as process from 'process';
 
 import reportWebVitals from './reportWebVitals';
 import router from './router/router';
@@ -14,6 +15,9 @@ const darkTheme = createTheme({
 		mode: 'dark'
 	}
 });
+window.global = window;
+window.process = process;
+window.Buffer = [];
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

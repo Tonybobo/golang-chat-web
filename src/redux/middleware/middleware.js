@@ -15,7 +15,7 @@ import {
 	receiveVideoCall,
 	setCallAccepted
 } from './webrtc';
-const Peer = require('simple-peer');
+import Peer from 'simple-peer';
 let peer;
 
 let socket = null;
@@ -146,6 +146,9 @@ const socketMiddleware = () => {
 							video.srcObject = remoteStream;
 							video.play();
 						});
+						peer.on('close', () => {
+							console.log('close');
+						});
 					});
 				break;
 			case 'panel/videoCall':
@@ -180,6 +183,9 @@ const socketMiddleware = () => {
 							video.srcObject = remoteStream;
 							video.play();
 						});
+						peer.on('close', () => {
+							console.log('close');
+						});
 					});
 				break;
 
@@ -210,6 +216,9 @@ const socketMiddleware = () => {
 							let video = document.getElementById('remoteVideo');
 							video.srcObject = remoteStream;
 							video.play();
+						});
+						peer.on('close', () => {
+							console.log('close');
 						});
 						peer.signal(signal);
 					});
@@ -242,6 +251,9 @@ const socketMiddleware = () => {
 							video.srcObject = remoteStream;
 							video.play();
 						});
+						peer.on('close', () => {
+							console.log('close');
+						});
 
 						peer.signal(signal2);
 					});
@@ -250,7 +262,9 @@ const socketMiddleware = () => {
 				let video = document.getElementById('remoteVideo');
 
 				video.srcObject = null;
+
 				peer.destroy();
+
 				next(action);
 				break;
 			default:
