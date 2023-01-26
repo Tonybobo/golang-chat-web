@@ -18,7 +18,9 @@ import CallEndIcon from '@mui/icons-material/CallEnd';
 import {
 	answerAudioCall,
 	rejectAudioCall,
-	leaveCall
+	leaveCall,
+	answerVideoCall,
+	rejectVideoCall
 } from '../../redux/middleware/webrtc';
 import Draggable from 'react-draggable';
 
@@ -54,8 +56,10 @@ export default function Panel() {
 						top: '50%',
 						margin: 0,
 						backgroundColor: '#000',
-
-						overflow: 'hidden'
+						padding: 0,
+						overflow: 'hidden',
+						width: 200,
+						height: 200
 					}}
 					{...props}
 				/>
@@ -97,10 +101,16 @@ export default function Panel() {
 					message={`${caller.fromUsername} request for video call`}
 					action={
 						<>
-							<IconButton color="inherit" sx={{ p: 0.5, marginRight: 0.5 }}>
+							<IconButton
+								color="inherit"
+								sx={{ p: 0.5, marginRight: 0.5 }}
+								onClick={() => dispatch(answerVideoCall())}>
 								<CallIcon />
 							</IconButton>
-							<IconButton color="inherit" sx={{ p: 0.5, marginLeft: 0.5 }}>
+							<IconButton
+								color="inherit"
+								sx={{ p: 0.5, marginLeft: 0.5 }}
+								onClick={() => dispatch(rejectVideoCall())}>
 								<CallEndIcon />
 							</IconButton>
 						</>
@@ -111,25 +121,43 @@ export default function Panel() {
 					hideBackdrop
 					disableEnforceFocus
 					style={{
-						position: 'initial'
+						position: 'initial',
+						padding: '0'
 					}}
 					open={calling || callAccepted}
 					PaperComponent={PaperComponent}
-					aria-labelledby="draggable-dialog-title"
-					disableBackdropClick>
+					aria-labelledby="draggable-dialog-title">
 					<DialogTitle
-						style={{ cursor: 'move', textAlign: 'center' }}
+						style={{
+							cursor: 'move',
+							textAlign: 'center',
+							padding: 0,
+							position: 'absolute',
+							top: '10px',
+							left: '30%',
+							zIndex: 10000
+						}}
 						id="draggable-dialog-title">
 						{caller.fromUsername}
 					</DialogTitle>
-					<DialogContent>
-						<video id="remoteVideo" style={{ width: 200, height: 200 }} />
+					<DialogContent sx={{ padding: 0 }}>
+						<video
+							id="remoteVideo"
+							style={{
+								width: 200,
+								height: 200,
+								position: 'absolute',
+								top: 0,
+								left: 0,
+								objectFit: 'cover'
+							}}
+						/>
 					</DialogContent>
 					<DialogActions
 						sx={{
 							position: 'absolute',
 							bottom: '10%',
-							left: '40%'
+							left: '34%'
 						}}>
 						<IconButton
 							color="inherit"

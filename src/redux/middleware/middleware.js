@@ -8,9 +8,14 @@ import {
 
 import protobuf from '../../proto/proto';
 import { appendFriendMsg, appendMsg } from '../actions/chat';
-import Peer from 'simple-peer';
-import { calling, receiveAudioCall, setCallAccepted } from './webrtc';
 
+import {
+	calling,
+	receiveAudioCall,
+	receiveVideoCall,
+	setCallAccepted
+} from './webrtc';
+const Peer = require('simple-peer');
 let peer;
 
 let socket = null;
@@ -62,14 +67,13 @@ const socketMiddleware = () => {
 								content: messageBuffer.content
 							};
 							store.dispatch(receiveAudioCall(caller));
-						}
-						if (messageBuffer.contentType === VIDEO_ONLINE) {
+						} else if (messageBuffer.contentType === VIDEO_ONLINE) {
 							let caller = {
 								fromUsername: messageBuffer.fromUsername,
 								from: messageBuffer.from,
 								content: messageBuffer.content
 							};
-							store.dispatch(receiveAudioCall(caller));
+							store.dispatch(receiveVideoCall(caller));
 						}
 						break;
 					case 'answer':
@@ -95,6 +99,7 @@ const socketMiddleware = () => {
 	return (store) => (next) => (action) => {
 		const { users } = store.getState().users;
 		const { selectUser, caller } = store.getState().chats;
+		const { content } = caller;
 		switch (action.type) {
 			case 'users/login/fulfilled':
 				if (socket !== null) {
@@ -143,11 +148,43 @@ const socketMiddleware = () => {
 						});
 					});
 				break;
+			case 'panel/videoCall':
+				store.dispatch(calling());
+				navigator.mediaDevices
+					.getUserMedia({
+						audio: true,
+						video: true
+					})
+					.then((stream) => {
+						peer = new Peer({
+							initiator: true,
+							trickle: false,
+							stream: stream
+						});
+
+						peer.on('signal', (data) => {
+							let request = {
+								contentType: VIDEO_ONLINE,
+								fromUsername: users.username,
+								from: users.uid,
+								to: selectUser.uid,
+								type: MESSAGE_TRANS_TYPE,
+								content: JSON.stringify(data)
+							};
+							let buffer = message.create(request);
+							socket.send(message.encode(buffer).finish());
+						});
+
+						peer.on('stream', (remoteStream) => {
+							let video = document.getElementById('remoteVideo');
+							video.srcObject = remoteStream;
+							video.play();
+						});
+					});
+				break;
 
 			case 'panel/answerAudioCall':
-				//set call accepted == true
 				store.dispatch(setCallAccepted());
-				const { content } = caller;
 				let signal = JSON.parse(content);
 				navigator.mediaDevices
 					.getUserMedia({
@@ -177,14 +214,42 @@ const socketMiddleware = () => {
 						peer.signal(signal);
 					});
 				break;
+			case 'panel/answerVideoCall':
+				store.dispatch(setCallAccepted());
+				let signal2 = JSON.parse(content);
+				navigator.mediaDevices
+					.getUserMedia({
+						audio: true,
+						video: true
+					})
+					.then((stream) => {
+						peer = new Peer({ initiator: false, trickle: false, stream });
+
+						peer.on('signal', (data) => {
+							let response = {
+								contentType: VIDEO_ONLINE,
+								fromUsername: users.username,
+								from: users.uid,
+								to: selectUser.uid,
+								type: MESSAGE_TRANS_TYPE,
+								content: JSON.stringify(data)
+							};
+							let buffer = message.create(response);
+							socket.send(message.encode(buffer).finish());
+						});
+						peer.on('stream', (remoteStream) => {
+							let video = document.getElementById('remoteVideo');
+							video.srcObject = remoteStream;
+							video.play();
+						});
+
+						peer.signal(signal2);
+					});
+				break;
 			case 'panel/leaveCall':
 				let video = document.getElementById('remoteVideo');
-				video.srcObject.getVideoTracks().forEach((track) => {
-					track.stop();
-					video.srcObject.removeTrack(track);
-				});
-				console.log(video);
-				console.log('destroy peer connection');
+
+				video.srcObject = null;
 				peer.destroy();
 				next(action);
 				break;

@@ -141,7 +141,7 @@ const chatSlice = createSlice({
 			state.caller = {};
 		});
 		builder.addCase(receiveVideoCall, (state, action) => {
-			state.receiveAudioCall = true;
+			state.receiveVideoCall = true;
 			state.caller = action.payload;
 		});
 		builder.addCase(rejectVideoCall, (state, action) => {

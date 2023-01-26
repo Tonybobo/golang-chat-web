@@ -9,6 +9,7 @@ import { AddVideo } from './VideoMessage';
 import { AddFile } from './FileMessage';
 import { AddAudio } from './AudioMessage';
 import { AudioOnline } from './AudioOnline';
+import { VideoOnline } from './VideoOnline';
 
 export default function ChatBox() {
 	const [msgInput, setMsgInput] = useState();
@@ -44,7 +45,7 @@ export default function ChatBox() {
 				<Box
 					sx={{
 						display: 'flex',
-						width: '50%',
+						width: '70%',
 						justifyContent: 'space-between'
 					}}>
 					<AddImage />
@@ -52,26 +53,29 @@ export default function ChatBox() {
 					<AddFile />
 					<AddAudio />
 					<AudioOnline />
+					<VideoOnline />
 				</Box>
 			</Box>
-			<OutlinedInput
-				fullWidth
-				multiline
-				rows={2}
-				value={msgInput}
-				onChange={(event) => setMsgInput(event.target.value)}
-				id="outlined-adornment-weight"
-				onKeyDown={EnterSendMsg}
-				endAdornment={
-					<InputAdornment position="end" onClick={EnterSendMsg}>
-						<SendIcon />
-					</InputAdornment>
-				}
-				aria-describedby="outlined-weight-helper-text"
-				inputProps={{
-					'aria-label': 'weight'
-				}}
-			/>
+			<Box>
+				<OutlinedInput
+					fullWidth
+					multiline
+					rows={1.5}
+					value={msgInput}
+					onChange={(event) => setMsgInput(event.target.value)}
+					id="outlined-adornment-weight"
+					onKeyDown={EnterSendMsg}
+					endAdornment={
+						<InputAdornment position="end" onClick={EnterSendMsg}>
+							<SendIcon />
+						</InputAdornment>
+					}
+					aria-describedby="outlined-weight-helper-text"
+					inputProps={{
+						'aria-label': 'weight'
+					}}
+				/>
+			</Box>
 		</Box>
 	);
 }
