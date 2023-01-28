@@ -24,7 +24,7 @@ let socket = null;
 const socketMiddleware = () => {
 	const connection = (store, uid) => {
 		socket = new WebSocket(
-			'ws://' + IP_PORT + API_VERSION + '/socket.io?uid=' + uid
+			'wss://' + IP_PORT + API_VERSION + '/socket.io?uid=' + uid
 		);
 		// // websocket handlers
 		socket.onmessage = onMessage(store);
