@@ -10,10 +10,13 @@ import {
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import ReactAudioPlayer from 'react-audio-player';
 import dayjs from 'dayjs';
+import isToday from 'dayjs/plugin/isToday';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getSignedUrl } from '../../../../../utils/upload';
 import { sendMsg } from '../../../../../redux/actions/chat';
+
+dayjs.extend(isToday);
 
 export const AudioMessageRight = ({ url, timeStamp }) => {
 	return (
@@ -74,7 +77,9 @@ export const AudioMessageRight = ({ url, timeStamp }) => {
 								right: '-60px',
 								bottom: '0'
 							}}>
-							{dayjs(timeStamp).format('DD/MM/YY')}
+							{dayjs(timeStamp).isToday()
+								? dayjs(timeStamp).format('HH:mm')
+								: dayjs(timeStamp).format('HH:mm DD/MM/YY')}
 						</Typography>
 					}></ListItemText>
 			</Paper>
@@ -138,7 +143,9 @@ export const AudioMessageLeft = ({ url, timeStamp, sender }) => {
 									right: '-60px',
 									bottom: '0'
 								}}>
-								{dayjs(timeStamp).format('DD/MM/YY')}
+								{dayjs(timeStamp).isToday()
+									? dayjs(timeStamp).format('HH:mm')
+									: dayjs(timeStamp).format('HH:mm DD/MM/YY')}
 							</Typography>
 						}></ListItemText>
 				</Paper>

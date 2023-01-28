@@ -8,6 +8,7 @@ import {
 	IconButton
 } from '@mui/material';
 import dayjs from 'dayjs';
+import isToday from 'dayjs/plugin/isToday';
 import ReactPlayer from 'react-player/lazy';
 
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
@@ -15,6 +16,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useRef } from 'react';
 import { getSignedUrl } from '../../../../../utils/upload';
 import { sendMsg } from '../../../../../redux/actions/chat';
+
+dayjs.extend(isToday);
 
 export const VideoMessageLeft = ({ url, timeStamp, sender }) => {
 	return (
@@ -76,7 +79,9 @@ export const VideoMessageLeft = ({ url, timeStamp, sender }) => {
 								color="gray"
 								textAlign="right"
 								sx={{ marginTop: 1 }}>
-								{dayjs(timeStamp).format('DD/MM/YY')}
+								{dayjs(timeStamp).isToday()
+									? dayjs(timeStamp).format('HH:mm')
+									: dayjs(timeStamp).format('HH:mm DD/MM/YY')}
 							</Typography>
 						}></ListItemText>
 				</Paper>
@@ -147,7 +152,9 @@ export const VideoMessageRight = ({ url, timeStamp }) => {
 							color="gray"
 							textAlign="right"
 							sx={{ marginTop: 1 }}>
-							{dayjs(timeStamp).format('DD/MM/YY')}
+							{dayjs(timeStamp).isToday()
+								? dayjs(timeStamp).format('HH:mm')
+								: dayjs(timeStamp).format('HH:mm DD/MM/YY')}
 						</Typography>
 					}></ListItemText>
 			</Paper>

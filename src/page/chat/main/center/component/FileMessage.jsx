@@ -13,10 +13,13 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 
 import dayjs from 'dayjs';
+import isToday from 'dayjs/plugin/isToday';
 import { getSignedUrl } from '../../../../../utils/upload';
 import { sendMsg } from '../../../../../redux/actions/chat';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRef } from 'react';
+
+dayjs.extend(isToday);
 
 export const FileMessageLeft = ({ url, timeStamp, sender }) => {
 	const decode = decodeURI(url);
@@ -75,7 +78,9 @@ export const FileMessageLeft = ({ url, timeStamp, sender }) => {
 					<ListItemText
 						secondary={
 							<Typography variant="subtitle2" color="gray" textAlign="right">
-								{dayjs(timeStamp).format('DD/MM/YY')}
+								{dayjs(timeStamp).isToday()
+									? dayjs(timeStamp).format('HH:mm')
+									: dayjs(timeStamp).format('HH:mm DD/MM/YY')}
 							</Typography>
 						}></ListItemText>
 				</Paper>
@@ -144,7 +149,9 @@ export const FileMessageRight = ({ url, timeStamp }) => {
 				<ListItemText
 					secondary={
 						<Typography variant="subtitle2" color="gray" textAlign="right">
-							{dayjs(timeStamp).format('DD/MM/YY')}
+							{dayjs(timeStamp).isToday()
+								? dayjs(timeStamp).format('HH:mm')
+								: dayjs(timeStamp).format('HH:mm DD/MM/YY')}
 						</Typography>
 					}></ListItemText>
 			</Paper>

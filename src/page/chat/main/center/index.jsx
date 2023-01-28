@@ -32,6 +32,7 @@ export default function MiniDrawer() {
 					display: 'flex',
 					flexDirection: 'column',
 					height: '100vh',
+
 					justifyContent: 'space-between'
 				}}>
 				<DrawerHeader />

@@ -1,6 +1,8 @@
 import { ListItemText, Typography, Box, ListItem, Paper } from '@mui/material';
 
 import dayjs from 'dayjs';
+import isToday from 'dayjs/plugin/isToday';
+dayjs.extend(isToday);
 
 export const MessageLeft = ({ content, timeStamp, sender }) => {
 	return (
@@ -11,7 +13,7 @@ export const MessageLeft = ({ content, timeStamp, sender }) => {
 						width: 200,
 						borderBlockColor: 'lightgray',
 						position: 'relative',
-						paddingX: 2,
+						paddingX: 1,
 						paddingY: 0,
 						marginTop: 1,
 						marginLeft: 1,
@@ -43,7 +45,9 @@ export const MessageLeft = ({ content, timeStamp, sender }) => {
 								color="gray"
 								textAlign="right"
 								sx={{ marginTop: 1 }}>
-								{dayjs(timeStamp).format('DD/MM/YY')}
+								{dayjs(timeStamp).isToday()
+									? dayjs(timeStamp).format('HH:mm')
+									: dayjs(timeStamp).format('HH:mm DD/MM/YY')}
 							</Typography>
 						}
 					/>
@@ -61,7 +65,7 @@ export const MessageRight = ({ content, timeStamp }) => {
 					display: 'flex',
 					alignItems: 'center',
 					width: 200,
-					paddingX: 2,
+					paddingX: 1,
 					paddingY: 0,
 					position: 'relative',
 					'&::after': {
@@ -96,7 +100,9 @@ export const MessageRight = ({ content, timeStamp }) => {
 							color="gray"
 							textAlign="right"
 							sx={{ marginTop: 1 }}>
-							{dayjs(timeStamp).format('DD/MM/YY')}
+							{dayjs(timeStamp).isToday()
+								? dayjs(timeStamp).format('HH:mm')
+								: dayjs(timeStamp).format('HH:mm DD/MM/YY')}
 						</Typography>
 					}></ListItemText>
 			</Paper>

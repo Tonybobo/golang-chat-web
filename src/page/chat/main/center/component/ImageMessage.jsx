@@ -8,12 +8,15 @@ import {
 	Box
 } from '@mui/material';
 import dayjs from 'dayjs';
+import isToday from 'dayjs/plugin/isToday';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import ImageIcon from '@mui/icons-material/Image';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRef } from 'react';
 import { getSignedUrl } from '../../../../../utils/upload';
 import { sendMsg } from '../../../../../redux/actions/chat';
+
+dayjs.extend(isToday);
 
 export const ImageMessageLeft = ({ url, timeStamp, sender }) => {
 	return (
@@ -55,7 +58,9 @@ export const ImageMessageLeft = ({ url, timeStamp, sender }) => {
 					<ListItemText
 						secondary={
 							<Typography variant="subtitle2" color="gray" textAlign="right">
-								{dayjs(timeStamp).format('DD/MM/YY')}
+								{dayjs(timeStamp).isToday()
+									? dayjs(timeStamp).format('HH:mm')
+									: dayjs(timeStamp).format('HH:mm DD/MM/YY')}
 							</Typography>
 						}></ListItemText>
 				</Paper>
@@ -106,7 +111,9 @@ export const ImageMessageRight = ({ url, timeStamp, sender }) => {
 				<ListItemText
 					secondary={
 						<Typography variant="subtitle2" color="gray" textAlign="right">
-							{dayjs(timeStamp).format('DD/MM/YY')}
+							{dayjs(timeStamp).isToday()
+								? dayjs(timeStamp).format('HH:mm')
+								: dayjs(timeStamp).format('HH:mm DD/MM/YY')}
 						</Typography>
 					}></ListItemText>
 			</Paper>
