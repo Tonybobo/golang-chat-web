@@ -121,8 +121,7 @@ const chatSlice = createSlice({
 			state.selectUser.members = action.payload;
 		});
 		builder.addCase(getMoreMessages.fulfilled, (state, action) => {
-			let message = state.messages;
-			state.messages = [...action.payload, ...message];
+			state.messages.unshift(...action.payload);
 			state.pages++;
 		});
 

@@ -11,6 +11,7 @@ import { appendFriendMsg, appendMsg } from '../actions/chat';
 
 import {
 	calling,
+	leaveCall,
 	receiveAudioCall,
 	receiveVideoCall,
 	setCallAccepted
@@ -29,6 +30,7 @@ const socketMiddleware = () => {
 		socket.onmessage = onMessage(store);
 		socket.onclose = onClose(store);
 		socket.onopen = onOpen(store);
+		socket.onerror = onerror(store);
 	};
 	const onOpen = (store) => (event) => {
 		let data = {
@@ -39,6 +41,9 @@ const socketMiddleware = () => {
 		const messagePB = message.create(data);
 		socket.send(message.encode(messagePB).finish());
 		setInterval(() => socket.send(message.encode(messagePB).finish()), 10000);
+	};
+	const onerror = (store) => () => {
+		connection();
 	};
 
 	const onClose = (store) => () => {
@@ -56,7 +61,6 @@ const socketMiddleware = () => {
 			);
 			if (messageBuffer.type === MESSAGE_TRANS_TYPE) {
 				const content = JSON.parse(messageBuffer.content);
-				console.log(messageBuffer);
 
 				switch (content.type) {
 					case 'offer':
@@ -147,7 +151,10 @@ const socketMiddleware = () => {
 							video.play();
 						});
 						peer.on('close', () => {
-							console.log('close');
+							stream.getTracks().forEach((track) => {
+								track.stop();
+							});
+							store.dispatch(leaveCall());
 						});
 					});
 				break;
@@ -184,7 +191,10 @@ const socketMiddleware = () => {
 							video.play();
 						});
 						peer.on('close', () => {
-							console.log('close');
+							stream.getTracks().forEach((track) => {
+								track.stop();
+							});
+							store.dispatch(leaveCall());
 						});
 					});
 				break;
@@ -218,7 +228,10 @@ const socketMiddleware = () => {
 							video.play();
 						});
 						peer.on('close', () => {
-							console.log('close');
+							stream.getTracks().forEach((track) => {
+								track.stop();
+							});
+							store.dispatch(leaveCall());
 						});
 						peer.signal(signal);
 					});
@@ -252,17 +265,16 @@ const socketMiddleware = () => {
 							video.play();
 						});
 						peer.on('close', () => {
-							console.log('close');
+							stream.getTracks().forEach((track) => {
+								track.stop();
+							});
+							store.dispatch(leaveCall());
 						});
 
 						peer.signal(signal2);
 					});
 				break;
 			case 'panel/leaveCall':
-				let video = document.getElementById('remoteVideo');
-
-				video.srcObject = null;
-
 				peer.destroy();
 
 				next(action);

@@ -154,45 +154,53 @@ export const AddAudio = () => {
 	const { selectUser } = useSelector((state) => state.chats);
 	const { users } = useSelector((state) => state.users);
 
-	if (navigator.mediaDevices) {
-		navigator.mediaDevices
-			.getUserMedia({ audio: true })
-			.then((stream) => {
-				recorder = new MediaRecorder(stream);
-				recorder.ondataavailable = (e) => {
-					chunks.push(e.data);
-				};
-				recorder.onstop = () => {
-					const audioBlob = new Blob(chunks, { type: 'audio/wav' });
-					const reader = new FileReader();
-					reader.readAsDataURL(audioBlob);
-					reader.onloadend = async () => {
-						audioBlob.name = 'audio';
-						chunks = [];
-						const fileName = await getSignedUrl(audioBlob);
-
-						let msg = {
-							content: '',
-							contentType: 4,
-							messageType: selectUser.type,
-							fromUsername: users.username,
-							from: users.uid,
-							to: selectUser.uid,
-							url: `https://storage.googleapis.com/go-chat/${fileName}`
-						};
-
-						dispatch(sendMsg(msg));
-					};
-				};
-			})
-			.catch((err) => {
-				console.error(`The following error occurred: ${err}`);
+	const addStream = async (stream) => {
+		recorder = new MediaRecorder(stream);
+		recorder.ondataavailable = (e) => {
+			chunks.push(e.data);
+		};
+		recorder.onstop = () => {
+			stream.getTracks().forEach((track) => {
+				track.stop();
 			});
-	}
+			const audioBlob = new Blob(chunks, { type: 'audio/wav' });
+			const reader = new FileReader();
+			reader.readAsDataURL(audioBlob);
+			reader.onloadend = async () => {
+				audioBlob.name = 'audio';
+				chunks = [];
+				const fileName = await getSignedUrl(audioBlob);
 
-	const handleStart = () => {
-		if (navigator.getUserMedia) recorder.start();
-		else alert('Permission has not been granted');
+				let msg = {
+					content: '',
+					contentType: 4,
+					messageType: selectUser.type,
+					fromUsername: users.username,
+					from: users.uid,
+					to: selectUser.uid,
+					url: `https://storage.googleapis.com/go-chat/${fileName}`
+				};
+
+				dispatch(sendMsg(msg));
+			};
+		};
+	};
+
+	const handleStart = async () => {
+		if (navigator.getUserMedia) {
+			await navigator.mediaDevices
+				.getUserMedia({ audio: true })
+				.then((stream) => {
+					addStream(stream);
+				})
+				.catch((err) => {
+					console.error(`The following error occurred: ${err}`);
+				});
+
+			recorder.start();
+		} else {
+			alert('permission not granted');
+		}
 	};
 	const handleStop = () => {
 		recorder.stop();
