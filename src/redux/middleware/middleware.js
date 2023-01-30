@@ -23,7 +23,6 @@ let socket = null;
 
 const socketMiddleware = () => {
 	const connection = (store, uid) => {
-		console.log(window.location.protocol);
 		socket = new WebSocket(
 			window.location.protocol === 'https:'
 				? 'wss://' + IP_PORT + API_VERSION + '/socket.io?uid=' + uid
